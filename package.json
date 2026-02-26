@@ -1,0 +1,12 @@
+{
+  "name": "poke",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm run dev --prefix cursor-e2e-test",
+    "build": "npm run build --prefix cursor-e2e-test",
+    "start": "npm run start --prefix cursor-e2e-test",
+    "lint": "npm run lint --prefix cursor-e2e-test",
+    "storybook": "npm run storybook --prefix cursor-e2e-test",
+    "build-storybook": "npm run build-storybook --prefix cursor-e2e-test"
+  }
+}
