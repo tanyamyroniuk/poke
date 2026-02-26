@@ -44,7 +44,7 @@ export default function Home() {
             {/* Dialog trigger */}
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="lg" className="flex-1">Get Started</Button>
+                <Button size="lg" className="flex-1 text-base">Get Started</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
