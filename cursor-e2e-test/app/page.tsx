@@ -1,67 +1,61 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Info } from "lucide-react"
 
 export default function Home() {
-  const [inputValue, setInputValue] = useState("")
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    router.push("/home")
+  }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-8">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl">Welcome</CardTitle>
-            <Badge variant="secondary">shadcn/ui</Badge>
-          </div>
-          <CardDescription>A quick tour of the most common components.</CardDescription>
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      <Card className="w-full max-w-sm shadow-lg">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
+          <CardDescription>Enter your email and password to access your account</CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          {/* Alert */}
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertTitle>Heads up!</AlertTitle>
-            <AlertDescription>
-              This page shows 5 of the most popular shadcn components.
-            </AlertDescription>
-          </Alert>
+        <CardContent>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-          {/* Input */}
-          <Input
-            placeholder="Type something..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
 
-          <div className="flex gap-2">
-            {/* Dialog trigger */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button size="lg" className="flex-1 text-base">Get Started</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>You clicked Get Started!</DialogTitle>
-                  <DialogDescription>
-                    {inputValue
-                      ? `You typed: "${inputValue}"`
-                      : "Try typing something in the input above first."}
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-
-            <Button variant="outline" size="lg" onClick={() => setInputValue("")}>
-              Clear
+            <Button type="submit" className="w-full" size="lg">
+              Sign in
             </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
     </main>
