@@ -1,63 +1,46 @@
-"use client"
+import Link from "next/link"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+const VIEWS = [
+  {
+    href: "/login",
+    title: "Login",
+    description: "Sign in with email and password (demo routes to Home).",
+  },
+  {
+    href: "/home",
+    title: "Home",
+    description: "Scan or upload a Pokémon card, file uploader, and camera entry.",
+  },
+  {
+    href: "/analysis",
+    title: "Analysis",
+    description: "Processing screen with steps, mock card image, and actions.",
+  },
+] as const
 
-export default function Home() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
-  function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    router.push("/home")
-  }
-
+export default function ViewsIndexPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-sm shadow-lg">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
-          <CardDescription>Enter your email and password to access your account</CardDescription>
-        </CardHeader>
+    <main className="flex min-h-full flex-col items-center bg-muted/40 px-4 py-10">
+      <div className="w-full max-w-lg">
+        <header className="mb-8 text-center sm:text-left">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Views</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Jump to any screen in the app</p>
+        </header>
 
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            <Button type="submit" className="w-full" size="lg">
-              Sign in
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+        <nav aria-label="App views" className="grid gap-4 sm:grid-cols-1">
+          {VIEWS.map((item) => (
+            <Link key={item.href} href={item.href} className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <Card className="h-full transition-shadow hover:shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                  <CardDescription>{item.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          ))}
+        </nav>
+      </div>
     </main>
   )
 }

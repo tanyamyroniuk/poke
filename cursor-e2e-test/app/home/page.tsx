@@ -6,7 +6,7 @@ import { CameraButton } from "@/components/home/camera-button"
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen justify-center bg-white">
+    <main className="flex min-h-full justify-center bg-white">
       <div className="relative w-full max-w-sm flex flex-col px-8 pt-6 pb-8">
         <TopNav activeTab="home" />
 
