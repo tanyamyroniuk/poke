@@ -20,8 +20,6 @@ const ARTBOARD_H = 956
 const Y = (n: number) => Math.round((n * ARTBOARD_H) / FIGMA_FRAME_H)
 
 const DRAWER_HEADER_TOP = Y(30)
-const DRAWER_STEPS_TOP = Y(148)
-const DRAWER_INSET = 24
 const STEP_STACK_GAP_PX = 12
 
 type StepStatus = "pending" | "active" | "completed"
@@ -153,14 +151,14 @@ export type AnalysisDrawerProps = {
 export function AnalysisDrawer({ activeStep }: AnalysisDrawerProps) {
   return (
     <div
-      className="relative z-[10] h-full w-full"
+      className="flex h-full min-h-0 w-full flex-col"
       data-name="drawer"
       data-node-id="27084:176898"
     >
-      {/* 27062:113364 — centered, top 30px in Figma drawer, gap 12 between loader and copy */}
+      {/* 27062:113364 — fixed header; 27062:113372 scrolls below */}
       <div
-        className="absolute left-1/2 flex w-[392px] max-w-[calc(100%-48px)] -translate-x-1/2 flex-col items-center gap-3"
-        style={{ top: DRAWER_HEADER_TOP }}
+        className="flex w-full max-w-[calc(100%-48px)] shrink-0 flex-col items-center gap-3 self-center"
+        style={{ paddingTop: DRAWER_HEADER_TOP }}
       >
         <PokeballLoader />
         <div className="flex flex-col items-center gap-1.5 text-center">
@@ -172,25 +170,22 @@ export function AnalysisDrawer({ activeStep }: AnalysisDrawerProps) {
         </div>
       </div>
 
-      {/* 27062:113372 — left 24, top 148px, width 392, gap 12 */}
-      <div
-        className="absolute flex w-[392px] max-w-[calc(100%-48px)] flex-col"
-        style={{
-          left: DRAWER_INSET,
-          top: DRAWER_STEPS_TOP,
-          gap: STEP_STACK_GAP_PX,
-        }}
-      >
-        {STEPS.map((step, i) => (
-          <StepRow
-            key={step.label}
-            label={step.label}
-            title={step.title}
-            status={stepStatus(activeStep, i)}
-            pendingLeft={step.pendingLeft}
-            activeLeft={step.activeLeft}
-          />
-        ))}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 pb-4 pt-4">
+        <div
+          className="mx-auto flex w-full max-w-[392px] flex-col"
+          style={{ gap: STEP_STACK_GAP_PX }}
+        >
+          {STEPS.map((step, i) => (
+            <StepRow
+              key={step.label}
+              label={step.label}
+              title={step.title}
+              status={stepStatus(activeStep, i)}
+              pendingLeft={step.pendingLeft}
+              activeLeft={step.activeLeft}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
