@@ -17,6 +17,21 @@ const VIEWS = [
     title: "Analysis",
     description: "Processing screen with steps, mock card image, and actions.",
   },
+  {
+    href: "/fake-card",
+    title: "Fake card",
+    description: "AI verdict when a card is flagged as fake; discrepancy list and actions.",
+  },
+  {
+    href: "/original-card",
+    title: "Original card",
+    description: "AI verdict when a card is authenticated as genuine; details, value, and market trend.",
+  },
+  {
+    href: "/save-to-collection",
+    title: "Save to Collection",
+    description: "Pick an existing collection or create a new one to store the scanned card.",
+  },
 ] as const
 
 export default function ViewsIndexPage() {

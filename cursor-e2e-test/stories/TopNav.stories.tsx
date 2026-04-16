@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { TopNav } from '@/components/home/top-nav'
+import { BottomNav } from '@/components/home/bottom-nav'
 
-const meta: Meta<typeof TopNav> = {
-  title: 'Home/TopNav',
-  component: TopNav,
+const meta: Meta<typeof BottomNav> = {
+  title: 'Home/BottomNav',
+  component: BottomNav,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
@@ -11,28 +11,22 @@ const meta: Meta<typeof TopNav> = {
   argTypes: {
     activeTab: {
       control: 'select',
-      options: ['home', 'collections', 'directory'],
+      options: ['scan', 'collections'],
     },
   },
 }
 
 export default meta
-type Story = StoryObj<typeof TopNav>
+type Story = StoryObj<typeof BottomNav>
 
-export const HomeActive: Story = {
+export const ScanActive: Story = {
   args: {
-    activeTab: 'home',
+    activeTab: 'scan',
   },
 }
 
 export const CollectionsActive: Story = {
   args: {
     activeTab: 'collections',
-  },
-}
-
-export const DirectoryActive: Story = {
-  args: {
-    activeTab: 'directory',
   },
 }
