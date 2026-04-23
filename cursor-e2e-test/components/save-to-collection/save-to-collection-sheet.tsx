@@ -120,7 +120,7 @@ export function SaveToCollectionSheet({
 
       {/* Centred illustration + headings */}
       <div className="shrink-0 flex flex-col items-center gap-3 px-6 pt-6 text-center">
-        <CardsStackIcon size={96} />
+        <CardsStackIcon size={128} />
         <h1 className="text-[30px] font-medium leading-9 text-black">Save to Collection</h1>
         <p className="text-base font-normal leading-6 text-slate-500">
           Select existing collection to save or create new

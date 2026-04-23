@@ -28,6 +28,11 @@ export type CardScreenShellProps = {
   sheetHeightPx?: number
   /** Override hero image container height (%). Defaults to HERO_HEIGHT_PERCENT. */
   heroHeightPercent?: number
+  /**
+   * When provided the hero shows this image as a full-bleed background and
+   * renders imageSrc as a floating card on top (Figma 27065:114035–114037).
+   */
+  backgroundImageSrc?: StaticImageData | string
   /** Optional design marker (e.g. Figma frame name). */
   "data-name"?: string
 }
@@ -45,6 +50,7 @@ export function CardScreenShell({
   className,
   sheetHeightPx = SHEET_HEIGHT_PX,
   heroHeightPercent = HERO_HEIGHT_PERCENT,
+  backgroundImageSrc,
   "data-name": dataName,
 }: CardScreenShellProps) {
   const sheetStyle: CSSProperties = {
@@ -64,16 +70,50 @@ export function CardScreenShell({
         className="absolute inset-x-0 top-0 z-0 overflow-hidden bg-neutral-200"
         style={{ height: `${heroHeightPercent}%` }}
       >
-        <div className="absolute inset-0 overflow-hidden">
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            fill
-            priority
-            className="object-contain object-center"
-            sizes={`${ARTBOARD_W}px`}
-          />
-        </div>
+        {backgroundImageSrc ? (
+          <>
+            {/* Full-bleed background photo */}
+            <Image
+              src={backgroundImageSrc}
+              alt=""
+              fill
+              priority
+              className="object-cover object-center"
+              sizes={`${ARTBOARD_W}px`}
+            />
+            {/* Floating card — centered, shifted slightly downward to match Figma */}
+            <div
+              className="absolute overflow-hidden rounded-[8px] border-2 border-white shadow-[0px_12px_32px_-8px_rgba(106,68,18,0.25)]"
+              style={{
+                width: "53.6%",
+                aspectRatio: "5 / 7",
+                top: "calc(50% + 45px)",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <Image
+                src={imageSrc}
+                alt={imageAlt}
+                fill
+                priority
+                className="object-cover"
+                sizes="236px"
+              />
+            </div>
+          </>
+        ) : (
+          <div className="absolute inset-0 overflow-hidden">
+            <Image
+              src={imageSrc}
+              alt={imageAlt}
+              fill
+              priority
+              className="object-contain object-center"
+              sizes={`${ARTBOARD_W}px`}
+            />
+          </div>
+        )}
         <HeroPeachBlur />
       </div>
 

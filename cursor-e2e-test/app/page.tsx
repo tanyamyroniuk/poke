@@ -3,6 +3,7 @@ import Link from "next/link"
 const VIEWS = [
   { href: "/login", title: "Login" },
   { href: "/home", title: "Home" },
+  { href: "/collections", title: "Collections" },
   { href: "/analysis", title: "Analysis" },
   { href: "/fake-card", title: "Fake card" },
   { href: "/original-card", title: "Original card" },
