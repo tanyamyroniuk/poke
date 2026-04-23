@@ -1,57 +1,32 @@
 import Link from "next/link"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const VIEWS = [
-  {
-    href: "/login",
-    title: "Login",
-    description: "Sign in with email and password (demo routes to Home).",
-  },
-  {
-    href: "/home",
-    title: "Home",
-    description: "Scan or upload a Pokémon card, file uploader, and camera entry.",
-  },
-  {
-    href: "/analysis",
-    title: "Analysis",
-    description: "Processing screen with steps, mock card image, and actions.",
-  },
-  {
-    href: "/fake-card",
-    title: "Fake card",
-    description: "AI verdict when a card is flagged as fake; discrepancy list and actions.",
-  },
-  {
-    href: "/original-card",
-    title: "Original card",
-    description: "AI verdict when a card is authenticated as genuine; details, value, and market trend.",
-  },
-  {
-    href: "/save-to-collection",
-    title: "Save to Collection",
-    description: "Pick an existing collection or create a new one to store the scanned card.",
-  },
+  { href: "/login", title: "Login" },
+  { href: "/home", title: "Home" },
+  { href: "/analysis", title: "Analysis" },
+  { href: "/fake-card", title: "Fake card" },
+  { href: "/original-card", title: "Original card" },
+  { href: "/save-to-collection", title: "Save to Collection" },
+  { href: "/camera-test", title: "Camera Test" },
+  { href: "/camera-screen", title: "Camera Screen" },
 ] as const
 
 export default function ViewsIndexPage() {
   return (
-    <main className="flex min-h-full flex-col items-center bg-muted/40 px-4 py-10">
+    <main className="flex min-h-full flex-col items-center bg-muted/40 px-4 py-6">
       <div className="w-full max-w-lg">
-        <header className="mb-8 text-center sm:text-left">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Views</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Jump to any screen in the app</p>
+        <header className="mb-4">
+          <h1 className="text-lg font-bold tracking-tight text-foreground">Views</h1>
         </header>
 
-        <nav aria-label="App views" className="grid gap-4 sm:grid-cols-1">
+        <nav aria-label="App views" className="grid grid-cols-2 gap-2">
           {VIEWS.map((item) => (
-            <Link key={item.href} href={item.href} className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardHeader>
-                  <CardTitle className="text-lg">{item.title}</CardTitle>
-                  <CardDescription>{item.description}</CardDescription>
-                </CardHeader>
-              </Card>
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center rounded-xl border bg-card px-4 py-3 text-sm font-medium text-card-foreground shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {item.title}
             </Link>
           ))}
         </nav>
