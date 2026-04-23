@@ -4,6 +4,7 @@ const VIEWS = [
   { href: "/login", title: "Login" },
   { href: "/home", title: "Home" },
   { href: "/collections", title: "Collections" },
+  { href: "/collections/original-cards", title: "Collection Cards Internal" },
   { href: "/analysis", title: "Analysis" },
   { href: "/fake-card", title: "Fake card" },
   { href: "/original-card", title: "Original card" },
