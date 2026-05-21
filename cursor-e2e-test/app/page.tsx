@@ -11,6 +11,7 @@ const VIEWS = [
   { href: "/save-to-collection", title: "Save to Collection" },
   { href: "/camera-test", title: "Camera Test" },
   { href: "/camera-screen", title: "Camera Screen" },
+  { href: "/llm-test", title: "LLM Test" },
 ] as const
 
 export default function ViewsIndexPage() {
