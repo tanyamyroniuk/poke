@@ -144,14 +144,36 @@ export function useCamera(): UseCameraReturn {
     const video = videoRef.current
     if (!video || !streamRef.current) return null
 
+    const vw = video.videoWidth
+    const vh = video.videoHeight
+    if (!vw || !vh) return null
+
+    // Replicate the CSS object-cover crop used in CameraPreview (aspect-[3/4]).
+    // The preview center-crops the landscape frame into a portrait rectangle;
+    // the saved file must match that exactly so there are no black bars downstream.
+    const TARGET_ASPECT = 3 / 4
+    const videoAspect = vw / vh
+
+    let sx = 0, sy = 0, sw = vw, sh = vh
+
+    if (videoAspect > TARGET_ASPECT) {
+      // Wider than target — crop left and right equally
+      sw = Math.round(vh * TARGET_ASPECT)
+      sx = Math.round((vw - sw) / 2)
+    } else {
+      // Taller than target — crop top and bottom equally
+      sh = Math.round(vw / TARGET_ASPECT)
+      sy = Math.round((vh - sh) / 2)
+    }
+
     const canvas = document.createElement("canvas")
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
+    canvas.width = sw
+    canvas.height = sh
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return null
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, sw, sh)
 
     return new Promise<File | null>((resolve) => {
       canvas.toBlob(
@@ -159,7 +181,7 @@ export function useCamera(): UseCameraReturn {
           if (!blob) { resolve(null); return }
           const filename = `scan-${Date.now()}.jpg`
           resolve(new File([blob], filename, { type: "image/jpeg" }))
-          console.log("[useCamera] photo captured:", filename)
+          console.log("[useCamera] photo captured:", filename, `${sw}×${sh}`)
         },
         "image/jpeg",
         0.92

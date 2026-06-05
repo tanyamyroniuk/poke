@@ -1,7 +1,8 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { ArrowLeft, CircleCheck, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { CircleCheck, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CardsStackIcon } from "@/components/save-to-collection/cards-stack-icon"
 import {
@@ -53,9 +54,17 @@ export function SaveToCollectionSheet({
 }: SaveToCollectionSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>(initialState)
   const [collections, setCollections] = useState<Collection[]>(initialCollections)
-  const [selectedId, setSelectedId] = useState(initialCollections[0]?.id ?? "")
+  const [selectedId, setSelectedId] = useState(() => {
+    if (typeof window !== "undefined") {
+      const type = sessionStorage.getItem("cardResultType")
+      if (type === "original") return "original-cards"
+      if (type === "fake") return "fake-cards"
+    }
+    return initialCollections[0]?.id ?? ""
+  })
   const [newName, setNewName] = useState("")
   const backdropRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const selectedCollection = collections.find((c) => c.id === selectedId) ?? collections[0]
 
@@ -89,7 +98,13 @@ export function SaveToCollectionSheet({
   }
 
   function handleSave() {
-    if (onSave) onSave(selectedId)
+    if (onSave) { onSave(selectedId); return }
+    router.push("/collections")
+  }
+
+  function handleDismiss() {
+    if (onBack) { onBack(); return }
+    router.back()
   }
 
   const isSaveDisabled = sheetState === "creating"
@@ -106,21 +121,9 @@ export function SaveToCollectionSheet({
         />
       )}
 
-      {/* Inner nav row */}
-      <div className="shrink-0 flex items-center gap-3 px-6 pt-7">
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-1.5 text-base font-medium text-black hover:opacity-70"
-        >
-          <ArrowLeft className="size-5" strokeWidth={2} />
-          Card details
-        </button>
-      </div>
-
       {/* Centred illustration + headings */}
       <div className="shrink-0 flex flex-col items-center gap-3 px-6 pt-6 text-center">
-        <CardsStackIcon size={128} />
+        <CardsStackIcon size={90} />
         <h1 className="text-[30px] font-medium leading-9 text-black">Save to Collection</h1>
         <p className="text-base font-normal leading-6 text-slate-500">
           Select existing collection to save or create new
@@ -175,7 +178,7 @@ export function SaveToCollectionSheet({
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 space-y-3 px-6 pb-6 pt-4">
+      <div className="shrink-0 space-y-3 px-6 pt-4 pb-10">
         {/* "New collection created" toast — screen 4 */}
         {sheetState === "created" && (
           <div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
@@ -192,6 +195,13 @@ export function SaveToCollectionSheet({
         >
           Save Card
         </Button>
+        <button
+          type="button"
+          onClick={handleDismiss}
+          className="flex h-10 w-full items-center justify-center text-lg font-semibold text-gray-400 hover:text-gray-600"
+        >
+          Discard Result
+        </button>
       </div>
     </div>
   )

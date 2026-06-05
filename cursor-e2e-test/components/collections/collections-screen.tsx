@@ -97,7 +97,7 @@ function CollectionCard({ collection }: { collection: Collection }) {
 export function CollectionsScreen() {
   return (
     <main className="relative flex min-h-full flex-col bg-white">
-      <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col px-8 pb-8 pt-14">
+      <div className="mx-auto flex w-full flex-1 flex-col px-8 pb-8 pt-14">
 
         {/* Page title */}
         <h1 className="text-[40px] font-semibold leading-[48px] tracking-[-0.8px] text-[#171717]">
@@ -121,12 +121,8 @@ export function CollectionsScreen() {
             <CollectionCard key={c.id} collection={c} />
           ))}
         </div>
-
-        {/* Bottom nav */}
-        <div className="mt-auto pt-[88px]">
-          <BottomNav activeTab="collections" />
-        </div>
       </div>
+      <BottomNav activeTab="collections" />
 
       {/* Floating action button */}
       <button

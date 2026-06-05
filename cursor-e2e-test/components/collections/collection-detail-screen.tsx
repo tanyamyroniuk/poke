@@ -142,7 +142,7 @@ export function CollectionDetailScreen({ collectionId }: { collectionId: string 
 
   return (
     <main className="flex min-h-full flex-col bg-white">
-      <div className="mx-auto w-full max-w-[440px] px-8">
+      <div className="mx-auto w-full px-8">
 
         {/* Top bar: back button + search */}
         <div className="flex items-center justify-between pt-8">

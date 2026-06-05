@@ -6,8 +6,8 @@ import { BottomNav } from "@/components/home/bottom-nav"
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-full flex-col justify-center bg-white">
-      <div className="relative w-full max-w-sm flex flex-col flex-1 px-8 pt-6 pb-8 mx-auto">
+    <main className="flex min-h-full flex-col bg-white">
+      <div className="relative w-full flex flex-col flex-1 px-8 pt-6 pb-4 mx-auto">
         <div className="mt-6">
           <HeroSection />
         </div>
@@ -21,13 +21,10 @@ export default function HomePage() {
         </div>
 
         <div className="mt-6">
-          <CameraButton />
-        </div>
-
-        <div className="mt-auto pt-10">
-          <BottomNav activeTab="scan" />
+          <CameraButton href="/camera-screen" />
         </div>
       </div>
+      <BottomNav activeTab="scan" />
     </main>
   )
 }

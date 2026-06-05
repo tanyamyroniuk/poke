@@ -56,7 +56,7 @@ export default function LlmTestPage() {
 
   return (
     <main className="flex min-h-full flex-col bg-white">
-      <div className="relative mx-auto flex w-full max-w-sm flex-1 flex-col px-6 pb-6 pt-8">
+      <div className="relative mx-auto flex w-full flex-1 flex-col px-6 pb-6 pt-8">
         <header className="mb-4">
           <h1 className="text-lg font-bold tracking-tight">LLM Test</h1>
           <p className="text-sm text-muted-foreground">

@@ -35,7 +35,11 @@ export type FakeCardSheetProps = {
   setLine?: string
   introLines?: readonly string[]
   discrepancies?: ReadonlyArray<{ title: string; description: string }>
-  /** Primary actions; defaults to navigating home (Storybook can pass a stub). */
+  /** Called when user discards the result. */
+  onDiscard?: () => void
+  /** Called when user saves to collection anyway. */
+  onSaveAnyway?: () => void
+  /** Legacy stub for Storybook — used when onDiscard/onSaveAnyway are not provided. */
   onExit?: () => void
 }
 
@@ -48,12 +52,21 @@ export function FakeCardSheet({
   setLine = "Base Set, 2010",
   introLines = INTRO_LINES,
   discrepancies = DEFAULT_DISCREPANCIES,
+  onDiscard: onDiscardProp,
+  onSaveAnyway: onSaveAnywayProp,
   onExit,
 }: FakeCardSheetProps) {
   const router = useRouter()
-  const handleExit = () => {
-    if (onExit) onExit()
-    else router.push("/home")
+  const handleDiscard = () => {
+    if (onDiscardProp) { onDiscardProp(); return }
+    if (onExit) { onExit(); return }
+    router.push("/home")
+  }
+  const handleSaveAnyway = () => {
+    if (onSaveAnywayProp) { onSaveAnywayProp(); return }
+    if (onExit) { onExit(); return }
+    sessionStorage.setItem("cardResultType", "fake")
+    router.push("/save-to-collection")
   }
 
   return (
@@ -80,19 +93,19 @@ export function FakeCardSheet({
         </div>
       </div>
 
-      <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 py-4">
+      <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 pt-4 pb-10">
         <Button
           type="button"
           variant="secondary"
           className="h-16 w-full rounded-2xl border-0 bg-gray-100 text-lg font-medium text-black hover:bg-gray-200"
-          onClick={handleExit}
+          onClick={handleDiscard}
         >
           Discard Result
         </Button>
         <Button
           type="button"
           className="h-16 w-full rounded-2xl border-0 bg-[#dc2626] text-lg font-medium text-white hover:bg-[#b91c1c]"
-          onClick={handleExit}
+          onClick={handleSaveAnyway}
         >
           Save to Collection Anyway
         </Button>
