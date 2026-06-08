@@ -1,3 +1,5 @@
+"use client"
+
 import type { CSSProperties, ReactNode } from "react"
 import type { StaticImageData } from "next/image"
 import Image from "next/image"
@@ -21,6 +23,8 @@ export type CardScreenShellProps = {
   sheet: ReactNode
   backHref?: string
   backLabel?: string
+  /** When provided, renders a button instead of a Link for the back arrow. */
+  onBack?: () => void
   /** Optional node rendered above the sheet (e.g. Cancel Analysis). */
   floatingAction?: ReactNode
   className?: string
@@ -33,6 +37,11 @@ export type CardScreenShellProps = {
    * renders imageSrc as a floating card on top (Figma 27065:114035–114037).
    */
   backgroundImageSrc?: StaticImageData | string
+  /** How to fit imageSrc in the hero when backgroundImageSrc is not set. Defaults to "contain". */
+  heroObjectFit?: "contain" | "cover"
+  /** Fixed pixel height for the hero. Overrides heroHeightPercent when set. */
+  heroHeightPx?: number
+  /** Optional design marker (e.g. Figma frame name). */
   /** Optional design marker (e.g. Figma frame name). */
   "data-name"?: string
 }
@@ -46,29 +55,41 @@ export function CardScreenShell({
   sheet,
   backHref = "/home",
   backLabel = "Back",
+  onBack,
   floatingAction,
   className,
-  sheetHeightPx = SHEET_HEIGHT_PX,
+  sheetHeightPx,
   heroHeightPercent = HERO_HEIGHT_PERCENT,
   backgroundImageSrc,
+  heroObjectFit = "contain",
+  heroHeightPx,
   "data-name": dataName,
 }: CardScreenShellProps) {
-  const sheetStyle: CSSProperties = {
-    bottom: 0,
-    height: sheetHeightPx,
-  }
+  const heroSize = heroHeightPx != null ? heroHeightPx : `${heroHeightPercent}%`
+
+  // Sheet overlaps the hero by this amount so its rounded top corners sit on top of the image.
+  const SHEET_OVERLAP_PX = 32
+
+  // When sheetHeightPx is provided, use a fixed height (analysis-style overlap effect).
+  // Otherwise anchor the sheet so it overlaps the hero bottom, showing rounded corners over the image.
+  const sheetTop = heroHeightPx != null
+    ? heroHeightPx - SHEET_OVERLAP_PX
+    : `calc(${heroHeightPercent}% - ${SHEET_OVERLAP_PX}px)`
+  const sheetStyle: CSSProperties = sheetHeightPx != null
+    ? { bottom: 0, height: sheetHeightPx }
+    : { top: sheetTop, bottom: 0 }
 
   return (
     <div
       className={cn(
-        "relative mx-auto h-full min-h-0 w-full max-w-[440px] shrink-0 overflow-hidden bg-white",
+        "relative mx-auto h-full min-h-0 w-full shrink-0 overflow-hidden bg-white",
         className,
       )}
       data-name={dataName}
     >
       <div
         className="absolute inset-x-0 top-0 z-0 overflow-hidden bg-neutral-200"
-        style={{ height: `${heroHeightPercent}%` }}
+        style={{ height: heroSize, transition: "height 0.4s ease-out" }}
       >
         {backgroundImageSrc ? (
           <>
@@ -109,29 +130,41 @@ export function CardScreenShell({
               alt={imageAlt}
               fill
               priority
-              className="object-contain object-center"
+              unoptimized={typeof imageSrc === "string" && imageSrc.startsWith("data:")}
+              className={heroObjectFit === "cover" ? "object-cover object-center" : "object-contain object-center"}
               sizes={`${ARTBOARD_W}px`}
             />
           </div>
         )}
-        <HeroPeachBlur />
       </div>
 
       <div
-        className="absolute inset-x-0 z-[10] flex min-h-0 flex-col overflow-hidden rounded-t-[24px] bg-white shadow-[0_-8px_24px_-4px_rgba(0,0,0,0.06)]"
-        style={sheetStyle}
+        className="absolute inset-x-0 z-[10] flex min-h-0 flex-col overflow-hidden rounded-t-[24px] bg-white shadow-[0_-8px_24px_-4px_rgba(0,0,0,0.06)] animate-in slide-in-from-bottom-8 duration-500 ease-out"
+        style={{ ...sheetStyle, transition: "top 0.4s ease-out, height 0.4s ease-out" }}
       >
         {sheet}
       </div>
 
-      <Link
-        href={backHref}
-        className="absolute z-[30] flex size-12 items-center justify-center rounded-[14px] bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] ring-0 transition hover:bg-zinc-50"
-        style={{ left: BACK_INSET, top: BACK_TOP }}
-        aria-label={backLabel}
-      >
-        <ArrowLeft className="size-6 text-zinc-900" strokeWidth={2} />
-      </Link>
+      {onBack ? (
+        <button
+          type="button"
+          onClick={onBack}
+          className="absolute z-[30] flex size-12 items-center justify-center rounded-[14px] bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] ring-0 transition hover:bg-zinc-50"
+          style={{ left: BACK_INSET, top: BACK_TOP }}
+          aria-label={backLabel}
+        >
+          <ArrowLeft className="size-6 text-zinc-900" strokeWidth={2} />
+        </button>
+      ) : (
+        <Link
+          href={backHref}
+          className="absolute z-[30] flex size-12 items-center justify-center rounded-[14px] bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] ring-0 transition hover:bg-zinc-50"
+          style={{ left: BACK_INSET, top: BACK_TOP }}
+          aria-label={backLabel}
+        >
+          <ArrowLeft className="size-6 text-zinc-900" strokeWidth={2} />
+        </Link>
+      )}
 
       {floatingAction}
 

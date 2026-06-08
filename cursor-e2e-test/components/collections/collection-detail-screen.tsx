@@ -1,8 +1,9 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Image, { type StaticImageData } from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Search, CircleCheck } from "lucide-react"
+import { ArrowLeft, Search, CircleCheck, Layers } from "lucide-react"
 import charizardImg from "@/app/assets/mocks/card-charizard.jpg"
 import gyaradosImg  from "@/app/assets/mocks/card-gyarados.jpg"
 import skittyImg    from "@/app/assets/mocks/card-skitty.jpg"
@@ -128,21 +129,53 @@ function CardTile({ card }: { card: CardItem }) {
 
 export function CollectionDetailScreen({ collectionId }: { collectionId: string }) {
   const collection = getCollectionData(collectionId)
+  const [newCollectionName, setNewCollectionName] = useState<string | null>(null)
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem(`collection-${collectionId}`)
+    if (stored) setNewCollectionName(stored)
+  }, [collectionId])
 
   if (!collection) {
+    const name = newCollectionName ?? "Collection"
     return (
-      <main className="flex min-h-full flex-col items-center justify-center bg-white px-8">
-        <p className="text-base text-slate-500">Collection not found.</p>
-        <Link href="/collections" className="mt-4 text-sm font-medium text-[#dc2626]">
-          ← Back to Collections
-        </Link>
+      <main className="flex min-h-full flex-col bg-white">
+        {/* Top bar */}
+        <div className="mx-auto w-full px-8">
+          <div className="flex items-center justify-between pt-8">
+            <Link
+              href="/collections"
+              aria-label="Back to Collections"
+              className="flex size-12 items-center justify-center rounded-[14px] bg-slate-100 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-slate-200"
+            >
+              <ArrowLeft className="size-6 text-[#171717]" strokeWidth={2} />
+            </Link>
+          </div>
+          <h1 className="mt-6 text-[40px] font-semibold leading-[48px] tracking-[-0.8px] text-[#171717]">
+            {name}
+          </h1>
+        </div>
+        {/* Empty state */}
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 pb-16 text-center">
+          <Layers className="size-16 text-slate-200" strokeWidth={1.25} />
+          <p className="text-lg font-medium text-slate-400">No cards yet</p>
+          <p className="text-sm text-slate-400">
+            Scan or upload a card to add it to this collection
+          </p>
+          <Link
+            href="/home"
+            className="mt-2 rounded-2xl bg-[#dc2626] px-6 py-3 text-sm font-medium text-white hover:bg-[#b91c1c]"
+          >
+            Scan a Card
+          </Link>
+        </div>
       </main>
     )
   }
 
   return (
     <main className="flex min-h-full flex-col bg-white">
-      <div className="mx-auto w-full max-w-[440px] px-8">
+      <div className="mx-auto w-full px-8">
 
         {/* Top bar: back button + search */}
         <div className="flex items-center justify-between pt-8">

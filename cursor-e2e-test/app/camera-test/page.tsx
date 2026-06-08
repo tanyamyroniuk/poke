@@ -44,7 +44,7 @@ export default function CameraTestPage() {
 
   return (
     <main className="flex min-h-full flex-col bg-white">
-      <div className="relative w-full max-w-sm flex flex-col flex-1 px-6 pt-8 pb-8 mx-auto gap-6">
+      <div className="relative w-full flex flex-col flex-1 px-6 pt-8 pb-8 mx-auto gap-6">
 
         {/* Header */}
         <header>

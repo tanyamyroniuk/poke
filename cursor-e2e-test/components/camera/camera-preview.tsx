@@ -44,7 +44,7 @@ export function CameraPreview({
         <img
           src={imageSrc}
           alt="Captured card"
-          className="absolute inset-0 h-full w-full object-contain"
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
     )

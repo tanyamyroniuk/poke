@@ -11,24 +11,41 @@ import pokecardMock from "@/app/assets/mocks/pokecard2.jpg"
 
 const CANCEL_ABOVE_SHEET_PX = 24
 const STEP_ADVANCE_MS = 2800
+const STEP_COUNT = 3 // steps 0-2; value 3 means all complete
 
 export function AnalysisScreen() {
   const router = useRouter()
   const [activeStep, setActiveStep] = useState(0)
+  const [capturedImage, setCapturedImage] = useState<string | null>(null)
 
   useEffect(() => {
-    const id = window.setInterval(() => {
-      setActiveStep((s) => (s >= 3 ? 0 : s + 1))
-    }, STEP_ADVANCE_MS)
-    return () => window.clearInterval(id)
+    const stored = sessionStorage.getItem("capturedCardImage")
+    if (stored) setCapturedImage(stored)
   }, [])
+
+  // Advance one step at a time; stop when all steps complete
+  useEffect(() => {
+    if (activeStep >= STEP_COUNT) return
+    const id = window.setTimeout(() => setActiveStep((s) => s + 1), STEP_ADVANCE_MS)
+    return () => window.clearTimeout(id)
+  }, [activeStep])
+
+  // Navigate once all steps are done: 70% → original card, 30% → fake card
+  useEffect(() => {
+    if (activeStep < STEP_COUNT) return
+    const destination = Math.random() < 0.7 ? "/original-card" : "/fake-card"
+    const id = window.setTimeout(() => router.push(destination), 800)
+    return () => window.clearTimeout(id)
+  }, [activeStep, router])
 
   return (
     <CardScreenShell
       data-name="Forth screen"
-      imageSrc={pokecardMock}
+      imageSrc={capturedImage ?? pokecardMock}
       imageAlt="Card image for analysis"
+      heroObjectFit={capturedImage ? "cover" : "contain"}
       sheet={<AnalysisDrawer activeStep={activeStep} />}
+      sheetHeightPx={SHEET_HEIGHT_PX}
       backHref="/home"
       backLabel="Back to home"
       floatingAction={

@@ -49,8 +49,9 @@ export function OriginalCardSheet({
 }: OriginalCardSheetProps) {
   const router = useRouter()
   const handleSave = () => {
-    if (onSave) onSave()
-    else router.push("/home")
+    if (onSave) { onSave(); return }
+    sessionStorage.setItem("cardResultType", "original")
+    router.push("/save-to-collection")
   }
   const handleDiscard = () => {
     if (onDiscard) onDiscard()
@@ -117,7 +118,7 @@ export function OriginalCardSheet({
       </div>
 
       {/* Sticky footer */}
-      <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 py-4">
+      <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 pt-4 pb-10">
         <Button
           type="button"
           className="h-16 w-full rounded-2xl border-0 bg-[#dc2626] text-lg font-medium text-white hover:bg-[#b91c1c]"

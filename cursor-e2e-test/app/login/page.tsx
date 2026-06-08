@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-full items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-sm shadow-lg">
+      <Card className="w-full shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
           <CardDescription>Enter your email and password to access your account</CardDescription>
