@@ -1,9 +1,12 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Plus } from "lucide-react"
 import { BottomNav } from "@/components/home/bottom-nav"
+import { NewCollectionForm } from "@/components/save-to-collection/new-collection-form"
 import collectionThumb from "@/app/assets/mocks/collection-card-thumb.jpg"
 
 // ---------------------------------------------------------------------------
@@ -95,6 +98,24 @@ function CollectionCard({ collection }: { collection: Collection }) {
 // ---------------------------------------------------------------------------
 
 export function CollectionsScreen() {
+  const router = useRouter()
+  const [showModal, setShowModal] = useState(false)
+  const [newName, setNewName] = useState("")
+
+  function handleNewCollection() {
+    setNewName("")
+    setShowModal(true)
+  }
+
+  function handleCreate() {
+    const trimmed = newName.trim()
+    if (!trimmed) return
+    const id = `new-${Date.now()}`
+    sessionStorage.setItem(`collection-${id}`, trimmed)
+    setShowModal(false)
+    router.push(`/collections/${id}`)
+  }
+
   return (
     <main className="relative flex min-h-full flex-col bg-white">
       <div className="mx-auto flex w-full flex-1 flex-col px-8 pb-8 pt-14">
@@ -128,10 +149,31 @@ export function CollectionsScreen() {
       <button
         type="button"
         aria-label="Create new collection"
+        onClick={handleNewCollection}
         className="fixed bottom-[100px] right-8 flex size-14 items-center justify-center rounded-full bg-[#dc2626] text-white shadow-[0px_10px_30px_-5px_rgba(169,50,0,0.4)] transition-opacity hover:opacity-90"
       >
         <Plus className="size-[18px]" strokeWidth={2.5} />
       </button>
+
+      {showModal && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowModal(false)}
+            aria-hidden
+          />
+          {/* Form card */}
+          <div className="fixed inset-x-6 top-1/3 z-50 -translate-y-1/2 rounded-xl bg-white shadow-xl">
+            <NewCollectionForm
+              value={newName}
+              onChange={setNewName}
+              onCancel={() => setShowModal(false)}
+              onSubmit={handleCreate}
+            />
+          </div>
+        </>
+      )}
     </main>
   )
 }

@@ -1,3 +1,6 @@
+"use client"
+
+import { useRouter } from "next/navigation"
 import { HeroSection } from "@/components/home/hero-section"
 import { FileUploader } from "@/components/home/file-uploader"
 import { OrSeparator } from "@/components/home/or-separator"
@@ -5,6 +8,19 @@ import { CameraButton } from "@/components/home/camera-button"
 import { BottomNav } from "@/components/home/bottom-nav"
 
 export default function HomePage() {
+  const router = useRouter()
+
+  function handleFileSelect(file: File) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        sessionStorage.setItem("capturedCardImage", reader.result)
+        router.push("/analysis")
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   return (
     <main className="flex min-h-full flex-col bg-white">
       <div className="relative w-full flex flex-col flex-1 px-8 pt-6 pb-4 mx-auto">
@@ -13,7 +29,7 @@ export default function HomePage() {
         </div>
 
         <div className="mt-12">
-          <FileUploader />
+          <FileUploader onFileSelect={handleFileSelect} />
         </div>
 
         <div className="mt-6">
