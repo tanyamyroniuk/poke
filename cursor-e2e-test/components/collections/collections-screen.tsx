@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -16,67 +16,56 @@ import collectionThumb from "@/app/assets/mocks/collection-card-thumb.jpg"
 type Collection = {
   id: string
   name: string
-  estimatedValue: string
   cardCount: number
-  /** When true the thumbnail is rendered in grayscale (fake / counterfeit set). */
-  grayscale?: boolean
+  totalValue: number
+  isOriginalCollection: boolean
 }
 
 // ---------------------------------------------------------------------------
-// Mock data — replace with real data fetching
+// Helpers
 // ---------------------------------------------------------------------------
 
-const MOCK_COLLECTIONS: Collection[] = [
-  {
-    id: "original-cards",
-    name: "Original Cards Collection",
-    estimatedValue: "$12,400 - $18,200",
-    cardCount: 38,
-  },
-  {
-    id: "fake-cards",
-    name: "Fake Cards Collection",
-    estimatedValue: "$115 - $140",
-    cardCount: 15,
-    grayscale: true,
-  },
-]
+function formatValue(value: number) {
+  if (value === 0) return "No value estimated"
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value)
+}
 
 // ---------------------------------------------------------------------------
 // Collection card
 // ---------------------------------------------------------------------------
 
 function CollectionCard({ collection }: { collection: Collection }) {
+  const grayscale = !collection.isOriginalCollection
   return (
     <Link
       href={`/collections/${collection.id}`}
       className="isolate overflow-clip rounded-xl bg-slate-50 transition-shadow hover:shadow-md"
     >
-      {/* Image hero with gradient + name overlay */}
       <div className="relative h-48 w-full">
         <Image
           src={collectionThumb}
           alt={collection.name}
           fill
-          className={`object-cover ${collection.grayscale ? "grayscale" : ""}`}
+          className={`object-cover ${grayscale ? "grayscale" : ""}`}
           sizes="376px"
         />
-        {/* Bottom-half darkening gradient */}
         <div className="absolute inset-x-0 top-1/2 bottom-0 bg-gradient-to-t from-black/60 to-transparent" />
-        {/* Collection name */}
         <p className="absolute bottom-4 left-4 right-4 text-xl font-semibold leading-7 text-white">
           {collection.name}
         </p>
       </div>
 
-      {/* Stats row */}
       <div className="flex items-start justify-between p-5">
         <div className="flex flex-col gap-1">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24px] text-gray-400">
             Estimated Value
           </p>
           <p className="text-xl font-semibold leading-7 text-[#191c1d]">
-            {collection.estimatedValue}
+            {formatValue(collection.totalValue)}
           </p>
         </div>
 
@@ -99,53 +88,61 @@ function CollectionCard({ collection }: { collection: Collection }) {
 
 export function CollectionsScreen() {
   const router = useRouter()
+  const [collections, setCollections] = useState<Collection[]>([])
   const [showModal, setShowModal] = useState(false)
   const [newName, setNewName] = useState("")
+
+  useEffect(() => {
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then(setCollections)
+  }, [])
 
   function handleNewCollection() {
     setNewName("")
     setShowModal(true)
   }
 
-  function handleCreate() {
+  async function handleCreate() {
     const trimmed = newName.trim()
     if (!trimmed) return
-    const id = `new-${Date.now()}`
-    sessionStorage.setItem(`collection-${id}`, trimmed)
+    const res = await fetch("/api/collections", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: trimmed }),
+    })
+    const newCollection = await res.json()
     setShowModal(false)
-    router.push(`/collections/${id}`)
+    router.push(`/collections/${newCollection.id}`)
   }
+
+  const totalValue = collections.reduce((sum, c) => sum + c.totalValue, 0)
 
   return (
     <main className="relative flex min-h-full flex-col bg-white">
       <div className="mx-auto flex w-full flex-1 flex-col px-8 pb-8 pt-14">
 
-        {/* Page title */}
         <h1 className="text-[40px] font-semibold leading-[48px] tracking-[-0.8px] text-[#171717]">
           Collections
         </h1>
 
-        {/* Total value summary card */}
         <div className="mt-8 rounded-xl bg-slate-50 px-6 py-4">
           <p className="text-xs text-slate-600">Total Card Collection Value</p>
           <div className="mt-1.5 flex items-end gap-2">
-            <p className="text-[30px] font-medium leading-none text-black">$24,850.00</p>
-            <span className="mb-0.5 rounded-full bg-green-100 px-2 py-1 text-[11px] font-semibold leading-4 text-green-800">
-              +12.4% THIS MONTH
-            </span>
+            <p className="text-[30px] font-medium leading-none text-black">
+              {formatValue(totalValue)}
+            </p>
           </div>
         </div>
 
-        {/* Collection cards */}
         <div className="mt-8 flex flex-col gap-8">
-          {MOCK_COLLECTIONS.map((c) => (
+          {collections.map((c) => (
             <CollectionCard key={c.id} collection={c} />
           ))}
         </div>
       </div>
       <BottomNav activeTab="collections" />
 
-      {/* Floating action button */}
       <button
         type="button"
         aria-label="Create new collection"
@@ -157,13 +154,11 @@ export function CollectionsScreen() {
 
       {showModal && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setShowModal(false)}
             aria-hidden
           />
-          {/* Form card */}
           <div className="fixed inset-x-6 top-1/3 z-50 -translate-y-1/2 rounded-xl bg-white shadow-xl">
             <NewCollectionForm
               value={newName}
