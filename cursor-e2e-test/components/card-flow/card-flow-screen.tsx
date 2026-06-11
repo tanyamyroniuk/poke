@@ -20,7 +20,7 @@ type FlowStep = "analysis" | "original" | "fake" | "save"
 
 const FADE_MS = 180      // content fade out/in
 const RESIZE_MS = 400    // hero + sheet resize
-const STEP_ADVANCE_MS = 2800
+const STEP_ADVANCE_MS = 1100
 const STEP_COUNT = 3
 
 interface StepConfig {
@@ -78,7 +78,7 @@ export function CardFlowScreen() {
     const next: "original" | "fake" = Math.random() < 0.7 ? "original" : "fake"
     sessionStorage.setItem("cardResultType", next)
     setResultStep(next)
-    const id = window.setTimeout(() => transitionTo(next), 800)
+    const id = window.setTimeout(() => transitionTo(next), 500)
     return () => window.clearTimeout(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, analysisStep])

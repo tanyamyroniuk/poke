@@ -32,6 +32,8 @@ export type OriginalCardSheetProps = {
   aboutText?: string
   onSave?: () => void
   onDiscard?: () => void
+  /** When true, hides the Save / Discard footer (used on the saved card profile page). */
+  viewOnly?: boolean
 }
 
 /**
@@ -46,6 +48,7 @@ export function OriginalCardSheet({
   aboutText = ABOUT_TEXT,
   onSave,
   onDiscard,
+  viewOnly = false,
 }: OriginalCardSheetProps) {
   const router = useRouter()
   const handleSave = () => {
@@ -118,22 +121,24 @@ export function OriginalCardSheet({
       </div>
 
       {/* Sticky footer */}
-      <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 pt-4 pb-10">
-        <Button
-          type="button"
-          className="h-16 w-full rounded-2xl border-0 bg-[#dc2626] text-lg font-medium text-white hover:bg-[#b91c1c]"
-          onClick={handleSave}
-        >
-          Save to Collection
-        </Button>
-        <button
-          type="button"
-          className="flex h-10 w-full items-center justify-center text-lg font-semibold text-gray-400 hover:text-gray-600"
-          onClick={handleDiscard}
-        >
-          Discard Result
-        </button>
-      </div>
+      {!viewOnly && (
+        <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 pt-4 pb-10">
+          <Button
+            type="button"
+            className="h-16 w-full rounded-2xl border-0 bg-[#dc2626] text-lg font-medium text-white hover:bg-[#b91c1c]"
+            onClick={handleSave}
+          >
+            Save to Collection
+          </Button>
+          <button
+            type="button"
+            className="flex h-10 w-full items-center justify-center text-lg font-semibold text-gray-400 hover:text-gray-600"
+            onClick={handleDiscard}
+          >
+            Discard Result
+          </button>
+        </div>
+      )}
     </div>
   )
 }

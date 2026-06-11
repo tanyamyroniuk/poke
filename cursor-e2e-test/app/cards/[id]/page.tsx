@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { CardScreenShell } from "@/components/card-screen/card-screen-shell"
 import { OriginalCardSheet } from "@/components/original-card/original-card-sheet"
 import { FakeCardSheet } from "@/components/fake-card/fake-card-sheet"
@@ -21,7 +20,6 @@ type Card = {
 export default function CardProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const [card, setCard] = useState<Card | null>(null)
   const [cardId, setCardId] = useState<string>("")
-  const router = useRouter()
 
   useEffect(() => {
     params.then(({ id }) => {
@@ -57,7 +55,7 @@ export default function CardProfilePage({ params }: { params: Promise<{ id: stri
       imageSrc={imageSrc}
       imageAlt={card.pokemonName}
       heroObjectFit={heroObjectFit}
-      heroHeightPx={200}
+      heroHeightPercent={50}
       backHref={backHref}
       backLabel="Back to collection"
       sheet={
@@ -66,15 +64,13 @@ export default function CardProfilePage({ params }: { params: Promise<{ id: stri
             cardName={card.pokemonName}
             verdictLabel={scoreLabel}
             collectorPrice={collectorPrice}
-            onSave={() => router.push(backHref)}
-            onDiscard={() => router.push(backHref)}
+            viewOnly
           />
         ) : (
           <FakeCardSheet
             cardName={card.pokemonName}
             verdictLabel={scoreLabel}
-            onDiscard={() => router.push(backHref)}
-            onSaveAnyway={() => router.push(backHref)}
+            viewOnly
           />
         )
       }
