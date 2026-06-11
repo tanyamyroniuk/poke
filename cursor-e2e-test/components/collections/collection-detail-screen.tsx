@@ -1,13 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image, { type StaticImageData } from "next/image"
 import Link from "next/link"
 import { ArrowLeft, Search, CircleCheck, Layers } from "lucide-react"
-import charizardImg from "@/app/assets/mocks/card-charizard.jpg"
-import gyaradosImg  from "@/app/assets/mocks/card-gyarados.jpg"
-import skittyImg    from "@/app/assets/mocks/card-skitty.jpg"
-import mewImg       from "@/app/assets/mocks/card-mew.jpg"
+import { cn } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -15,11 +11,12 @@ import mewImg       from "@/app/assets/mocks/card-mew.jpg"
 
 type CardItem = {
   id: string
-  name: string
-  year: number
-  priceFrom: string
-  authenticity: number
-  image: StaticImageData
+  pokemonName: string
+  isOriginal: boolean
+  imageUrl: string | null
+  estimatedValue: number | null
+  authenticityScore: number | null
+  scannedAt: string
 }
 
 type CollectionData = {
@@ -29,51 +26,25 @@ type CollectionData = {
 }
 
 // ---------------------------------------------------------------------------
-// Mock data — replace with real data fetching
+// Helpers
 // ---------------------------------------------------------------------------
 
-const COLLECTIONS: Record<string, CollectionData> = {
-  "original-cards": {
-    id: "original-cards",
-    name: "Original Cards Collection",
-    cards: [
-      { id: "c1", name: "Charizard", year: 2010, priceFrom: "$3,500", authenticity: 98.2, image: charizardImg },
-      { id: "c2", name: "Gyarados",  year: 2010, priceFrom: "$1,500", authenticity: 99.5, image: gyaradosImg  },
-      { id: "c3", name: "Skitty",    year: 2010, priceFrom: "$1,500", authenticity: 84.9, image: skittyImg    },
-      { id: "c4", name: "Mew",       year: 2010, priceFrom: "$1,500", authenticity: 84.9, image: mewImg       },
-      { id: "c5", name: "Charizard", year: 2010, priceFrom: "$3,500", authenticity: 98.2, image: charizardImg },
-      { id: "c6", name: "Gyarados",  year: 2010, priceFrom: "$1,500", authenticity: 99.5, image: gyaradosImg  },
-    ],
-  },
-  "fake-cards": {
-    id: "fake-cards",
-    name: "Fake Cards Collection",
-    cards: [
-      { id: "f1", name: "Charizard", year: 2010, priceFrom: "$12",    authenticity: 14.3, image: charizardImg },
-      { id: "f2", name: "Gyarados",  year: 2010, priceFrom: "$8",     authenticity: 22.1, image: gyaradosImg  },
-      { id: "f3", name: "Mew",       year: 2010, priceFrom: "$5",     authenticity: 11.7, image: mewImg       },
-    ],
-  },
-  "expensive": {
-    id: "expensive",
-    name: "Expensive Cards",
-    cards: [
-      { id: "e1", name: "Charizard", year: 2010, priceFrom: "$3,500", authenticity: 99.1, image: charizardImg },
-      { id: "e2", name: "Gyarados",  year: 2010, priceFrom: "$1,500", authenticity: 97.8, image: gyaradosImg  },
-    ],
-  },
-}
-
-export function getCollectionData(id: string): CollectionData | null {
-  return COLLECTIONS[id] ?? null
+function formatPrice(value: number | null) {
+  if (value === null) return "N/A"
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value)
 }
 
 // ---------------------------------------------------------------------------
 // Card tile
 // ---------------------------------------------------------------------------
 
-function AuthBadge({ score }: { score: number }) {
-  const isHigh = score >= 50
+function AuthBadge({ score, isOriginal }: { score: number | null; isOriginal: boolean }) {
+  const display = score !== null ? `${score}%` : isOriginal ? "Original" : "Fake"
+  const isHigh = isOriginal
   return (
     <div
       className={`absolute right-0 top-1 flex items-center gap-1.5 rounded-md px-1.5 py-1.5 ${
@@ -89,37 +60,46 @@ function AuthBadge({ score }: { score: number }) {
           isHigh ? "text-green-800" : "text-red-700"
         }`}
       >
-        {score}%
+        {display}
       </span>
     </div>
   )
 }
 
 function CardTile({ card }: { card: CardItem }) {
+  const year = new Date(card.scannedAt).getFullYear()
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl bg-slate-100 pb-5 pt-2.5 px-2.5">
-      {/* Image + badge */}
+    <Link
+      href={`/cards/${card.id}`}
+      className="flex flex-col items-center gap-3 rounded-xl bg-slate-100 pb-5 pt-2.5 px-2.5 transition-shadow hover:shadow-md"
+    >
       <div className="relative h-[145px] w-[160px] overflow-hidden rounded-lg">
-        <Image
-          src={card.image}
-          alt={`${card.name} ${card.year}`}
-          fill
-          className="object-cover"
-          sizes="160px"
-        />
-        <AuthBadge score={card.authenticity} />
+        {card.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={card.imageUrl}
+            alt={card.pokemonName}
+            className="absolute inset-0 size-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-200">
+            <span className="text-4xl font-bold text-slate-400">
+              {card.pokemonName.charAt(0)}
+            </span>
+          </div>
+        )}
+        <AuthBadge score={card.authenticityScore} isOriginal={card.isOriginal} />
       </div>
 
-      {/* Name + price */}
       <div className="flex w-full flex-col gap-1.5 px-0.5">
         <p className="text-base font-medium leading-normal text-black">
-          {card.name}, {card.year}
+          {card.pokemonName}, {year}
         </p>
         <p className="text-sm font-medium leading-none text-gray-500">
-          from {card.priceFrom}
+          from {formatPrice(card.estimatedValue)}
         </p>
       </div>
-    </div>
+    </Link>
   )
 }
 
@@ -128,19 +108,27 @@ function CardTile({ card }: { card: CardItem }) {
 // ---------------------------------------------------------------------------
 
 export function CollectionDetailScreen({ collectionId }: { collectionId: string }) {
-  const collection = getCollectionData(collectionId)
-  const [newCollectionName, setNewCollectionName] = useState<string | null>(null)
+  const [collection, setCollection] = useState<CollectionData | null | "loading">("loading")
 
   useEffect(() => {
-    const stored = sessionStorage.getItem(`collection-${collectionId}`)
-    if (stored) setNewCollectionName(stored)
+    fetch(`/api/collections/${collectionId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then(setCollection)
   }, [collectionId])
 
-  if (!collection) {
-    const name = newCollectionName ?? "Collection"
+  if (collection === "loading") {
     return (
       <main className="flex min-h-full flex-col bg-white">
-        {/* Top bar */}
+        <div className="flex flex-1 items-center justify-center">
+          <div className="size-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-500" />
+        </div>
+      </main>
+    )
+  }
+
+  if (!collection) {
+    return (
+      <main className="flex min-h-full flex-col bg-white">
         <div className="mx-auto w-full px-8">
           <div className="flex items-center justify-between pt-8">
             <Link
@@ -152,10 +140,9 @@ export function CollectionDetailScreen({ collectionId }: { collectionId: string 
             </Link>
           </div>
           <h1 className="mt-6 text-[40px] font-semibold leading-[48px] tracking-[-0.8px] text-[#171717]">
-            {name}
+            Collection
           </h1>
         </div>
-        {/* Empty state */}
         <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 pb-16 text-center">
           <Layers className="size-16 text-slate-200" strokeWidth={1.25} />
           <p className="text-lg font-medium text-slate-400">No cards yet</p>
@@ -177,7 +164,6 @@ export function CollectionDetailScreen({ collectionId }: { collectionId: string 
     <main className="flex min-h-full flex-col bg-white">
       <div className="mx-auto w-full px-8">
 
-        {/* Top bar: back button + search */}
         <div className="flex items-center justify-between pt-8">
           <Link
             href="/collections"
@@ -192,17 +178,31 @@ export function CollectionDetailScreen({ collectionId }: { collectionId: string 
           </button>
         </div>
 
-        {/* Collection title */}
         <h1 className="mt-6 text-[40px] font-semibold leading-[48px] tracking-[-0.8px] text-[#171717]">
           {collection.name}
         </h1>
 
-        {/* 2-column card grid */}
-        <div className="mt-8 grid grid-cols-2 gap-4 pb-10">
-          {collection.cards.map((card) => (
-            <CardTile key={card.id} card={card} />
-          ))}
-        </div>
+        {collection.cards.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 py-24 text-center">
+            <Layers className="size-16 text-slate-200" strokeWidth={1.25} />
+            <p className="text-lg font-medium text-slate-400">No cards yet</p>
+            <p className="text-sm text-slate-400">
+              Scan or upload a card to add it to this collection
+            </p>
+            <Link
+              href="/home"
+              className="mt-2 rounded-2xl bg-[#dc2626] px-6 py-3 text-sm font-medium text-white hover:bg-[#b91c1c]"
+            >
+              Scan a Card
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-8 grid grid-cols-2 gap-4 pb-10">
+            {collection.cards.map((card) => (
+              <CardTile key={card.id} card={card} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   )

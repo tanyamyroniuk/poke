@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Collection {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cards     Card[]
+}
+
+model Card {
+  id                String      @id @default(cuid())
+  pokemonName       String
+  isOriginal        Boolean     @default(true)
+  imageUrl          String?
+  estimatedValue    Float?
+  authenticityScore Float?
+  collectionId      String?
+  collection        Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  scannedAt         DateTime    @default(now())
+}

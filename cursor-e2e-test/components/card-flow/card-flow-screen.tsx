@@ -125,7 +125,7 @@ export function CardFlowScreen() {
 
       {step === "save" && (
         <SaveToCollectionSheet
-          onSave={() => router.push("/collections")}
+          onSave={(collectionId) => router.push(`/collections/${collectionId}`)}
           onBack={() => transitionTo(resultStep)}
         />
       )}
