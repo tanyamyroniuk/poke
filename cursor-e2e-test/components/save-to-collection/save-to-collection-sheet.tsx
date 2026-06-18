@@ -11,10 +11,18 @@ import {
   CollectionDropdown,
 } from "@/components/save-to-collection/collection-picker"
 import { NewCollectionForm } from "@/components/save-to-collection/new-collection-form"
+import type { CardAnalysisResult } from "@/lib/types/card-analysis"
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+function parseEstimatedValue(range: string | undefined): number | null {
+  if (!range || range === "unknown") return null
+  const match = range.match(/\$?([\d,]+)/)
+  if (!match) return null
+  return parseInt(match[1].replace(/,/g, ""), 10)
+}
 
 function compressImage(dataUrl: string, maxPx = 800, quality = 0.7): Promise<string> {
   return new Promise((resolve) => {
@@ -129,14 +137,20 @@ export function SaveToCollectionSheet({
     const isOriginal = sessionStorage.getItem("cardResultType") !== "fake"
     const raw = sessionStorage.getItem("capturedCardImage")
     const imageUrl = raw ? await compressImage(raw) : null
+    const storedAnalysis = sessionStorage.getItem("cardAnalysisResult")
+    const analysis: Partial<CardAnalysisResult> = storedAnalysis ? JSON.parse(storedAnalysis) : {}
+    const estimatedValue = parseEstimatedValue(analysis.estimatedValueRange)
     await fetch("/api/cards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        pokemonName: "Scanned Card",
+        pokemonName: analysis.pokemonName && analysis.pokemonName !== "unknown" ? analysis.pokemonName : "Scanned Card",
         isOriginal,
         collectionId: selectedId || null,
         imageUrl,
+        estimatedValue,
+        authenticityScore: analysis.authenticityScore ?? null,
+        analysisJson: storedAnalysis ?? null,
       }),
     })
     setSaving(false)

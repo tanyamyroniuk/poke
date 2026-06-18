@@ -22,6 +22,7 @@ model Card {
   imageUrl          String?
   estimatedValue    Float?
   authenticityScore Float?
+  analysisJson      String?
   collectionId      String?
   collection        Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
   scannedAt         DateTime    @default(now())

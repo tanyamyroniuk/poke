@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { CardScreenShell } from "@/components/card-screen/card-screen-shell"
 import { OriginalCardSheet } from "@/components/original-card/original-card-sheet"
 import { FakeCardSheet } from "@/components/fake-card/fake-card-sheet"
+import type { CardAnalysisResult } from "@/lib/types/card-analysis"
 import pokecardMock from "@/app/assets/mocks/pokecard2.jpg"
 
 type Card = {
@@ -13,17 +14,16 @@ type Card = {
   imageUrl: string | null
   estimatedValue: number | null
   authenticityScore: number | null
+  analysisJson: string | null
   collectionId: string | null
   scannedAt: string
 }
 
 export default function CardProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const [card, setCard] = useState<Card | null>(null)
-  const [cardId, setCardId] = useState<string>("")
 
   useEffect(() => {
     params.then(({ id }) => {
-      setCardId(id)
       fetch(`/api/cards/${id}`)
         .then((res) => (res.ok ? res.json() : null))
         .then(setCard)
@@ -38,6 +38,8 @@ export default function CardProfilePage({ params }: { params: Promise<{ id: stri
     )
   }
 
+  const analysis: Partial<CardAnalysisResult> = card.analysisJson ? JSON.parse(card.analysisJson) : {}
+
   const backHref = card.collectionId ? `/collections/${card.collectionId}` : "/collections"
   const imageSrc = card.imageUrl ?? pokecardMock
   const heroObjectFit = card.imageUrl ? "cover" : "contain"
@@ -46,9 +48,16 @@ export default function CardProfilePage({ params }: { params: Promise<{ id: stri
     ? `${card.isOriginal ? "Original" : "Fake"} – ${card.authenticityScore}%`
     : card.isOriginal ? "Original" : "Fake"
 
-  const collectorPrice = card.estimatedValue
-    ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(card.estimatedValue)
-    : "N/A"
+  const setLine = analysis.setName && analysis.setName !== "unknown" ? analysis.setName : undefined
+  const aboutText = analysis.funFact && analysis.funFact !== "unknown" ? analysis.funFact : undefined
+  const collectorPrice = analysis.estimatedValueRange && analysis.estimatedValueRange !== "unknown"
+    ? analysis.estimatedValueRange
+    : card.estimatedValue
+      ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(card.estimatedValue)
+      : undefined
+  const discrepancies = analysis.suspiciousIndicators?.length
+    ? analysis.suspiciousIndicators.map((s) => ({ title: s, description: "" }))
+    : undefined
 
   return (
     <CardScreenShell
@@ -61,15 +70,19 @@ export default function CardProfilePage({ params }: { params: Promise<{ id: stri
       sheet={
         card.isOriginal ? (
           <OriginalCardSheet
-            cardName={card.pokemonName}
+            cardName={analysis.cardName && analysis.cardName !== "unknown" ? analysis.cardName : card.pokemonName}
             verdictLabel={scoreLabel}
+            setLine={setLine}
             collectorPrice={collectorPrice}
+            aboutText={aboutText}
             viewOnly
           />
         ) : (
           <FakeCardSheet
-            cardName={card.pokemonName}
+            cardName={analysis.cardName && analysis.cardName !== "unknown" ? analysis.cardName : card.pokemonName}
             verdictLabel={scoreLabel}
+            setLine={setLine}
+            discrepancies={discrepancies}
             viewOnly
           />
         )
