@@ -41,6 +41,8 @@ export type FakeCardSheetProps = {
   onSaveAnyway?: () => void
   /** Legacy stub for Storybook — used when onDiscard/onSaveAnyway are not provided. */
   onExit?: () => void
+  /** When true, hides the Discard / Save Anyway footer (used on the saved card profile page). */
+  viewOnly?: boolean
 }
 
 /**
@@ -55,6 +57,7 @@ export function FakeCardSheet({
   onDiscard: onDiscardProp,
   onSaveAnyway: onSaveAnywayProp,
   onExit,
+  viewOnly = false,
 }: FakeCardSheetProps) {
   const router = useRouter()
   const handleDiscard = () => {
@@ -93,23 +96,25 @@ export function FakeCardSheet({
         </div>
       </div>
 
-      <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 pt-4 pb-10">
-        <Button
-          type="button"
-          variant="secondary"
-          className="h-16 w-full rounded-2xl border-0 bg-gray-100 text-lg font-medium text-black hover:bg-gray-200"
-          onClick={handleDiscard}
-        >
-          Discard Result
-        </Button>
-        <Button
-          type="button"
-          className="h-16 w-full rounded-2xl border-0 bg-[#dc2626] text-lg font-medium text-white hover:bg-[#b91c1c]"
-          onClick={handleSaveAnyway}
-        >
-          Save to Collection Anyway
-        </Button>
-      </div>
+      {!viewOnly && (
+        <div className="shrink-0 space-y-3 border-t border-neutral-100 bg-white px-6 pt-4 pb-10">
+          <Button
+            type="button"
+            variant="secondary"
+            className="h-16 w-full rounded-2xl border-0 bg-gray-100 text-lg font-medium text-black hover:bg-gray-200"
+            onClick={handleDiscard}
+          >
+            Discard Result
+          </Button>
+          <Button
+            type="button"
+            className="h-16 w-full rounded-2xl border-0 bg-[#dc2626] text-lg font-medium text-white hover:bg-[#b91c1c]"
+            onClick={handleSaveAnyway}
+          >
+            Save to Collection Anyway
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

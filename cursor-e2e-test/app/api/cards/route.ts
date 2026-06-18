@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { pokemonName, isOriginal, collectionId, imageUrl, estimatedValue, authenticityScore } = body
+  const { pokemonName, isOriginal, collectionId, imageUrl, estimatedValue, authenticityScore, analysisJson } = body
   const card = await prisma.card.create({
     data: {
       pokemonName: pokemonName ?? "Scanned Card",
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
       imageUrl: imageUrl ?? null,
       estimatedValue: estimatedValue ?? null,
       authenticityScore: authenticityScore ?? null,
+      analysisJson: analysisJson ?? null,
     },
   })
   return NextResponse.json(card, { status: 201 })
