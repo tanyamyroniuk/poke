@@ -12,6 +12,7 @@ export type OriginalCardStatusHeaderProps = {
   cardName?: string
   verdictLabel?: string
   setLine?: string
+  intro?: string
   checkItems?: readonly string[]
   className?: string
 }
@@ -21,6 +22,7 @@ export function OriginalCardStatusHeader({
   cardName = "Charizard",
   verdictLabel = "Original – 98.2%",
   setLine,
+  intro,
   checkItems = DEFAULT_CHECK_ITEMS,
   className,
 }: OriginalCardStatusHeaderProps) {
@@ -37,6 +39,10 @@ export function OriginalCardStatusHeader({
         <CircleCheck className="size-4 shrink-0 text-green-800" strokeWidth={2.5} aria-hidden />
         <p className="text-base font-semibold leading-none text-green-800">{verdictLabel}</p>
       </div>
+
+      {intro ? (
+        <p className="whitespace-pre-line text-base font-normal leading-relaxed text-[#191c1d]">{intro}</p>
+      ) : null}
 
       {checkItems.length > 0 && (
         <div className="flex flex-col gap-3">

@@ -28,8 +28,12 @@ export const CustomCard: Story = {
   args: {
     cardName: "Mewtwo",
     verdictLabel: "Original – 99.9%",
-    setLine: "Base Set, 1999",
+    setLine: "Base Set",
     collectorPrice: "$1,800",
-    conditionLabel: "Excellent, Avg $",
+    conditionScore: 60,
+    rarity: "Rare Holo",
+    setNumber: "10/102",
+    cardType: "Psychic",
+    checkItems: ["Sharp print quality", "Correct holographic pattern", "Authentic font weight"],
   },
 }

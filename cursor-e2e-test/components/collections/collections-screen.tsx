@@ -1,13 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Plus, MoreVertical, Trash2 } from "lucide-react"
 import { BottomNav } from "@/components/home/bottom-nav"
 import { NewCollectionForm } from "@/components/save-to-collection/new-collection-form"
-import collectionThumb from "@/app/assets/mocks/collection-card-thumb.jpg"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -19,6 +17,7 @@ type Collection = {
   cardCount: number
   totalValue: number
   isOriginalCollection: boolean
+  coverImageUrl: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -69,14 +68,15 @@ function CollectionCard({
 
       <Link href={`/collections/${collection.id}`} className="block overflow-hidden rounded-xl">
         {/* Image hero */}
-        <div className="relative h-48 w-full">
-          <Image
-            src={collectionThumb}
-            alt={collection.name}
-            fill
-            className={`object-cover ${grayscale ? "grayscale" : ""}`}
-            sizes="376px"
-          />
+        <div className="relative h-48 w-full bg-slate-200">
+          {collection.coverImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={collection.coverImageUrl}
+              alt={collection.name}
+              className={`absolute inset-0 size-full object-cover ${grayscale ? "grayscale" : ""}`}
+            />
+          ) : null}
           <div className="absolute inset-x-0 top-1/2 bottom-0 bg-gradient-to-t from-black/60 to-transparent" />
           <p className="absolute bottom-4 left-4 right-12 text-xl font-semibold leading-7 text-white">
             {collection.name}

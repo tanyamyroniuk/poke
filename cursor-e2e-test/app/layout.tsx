@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { AppShell } from "@/components/layout/app-shell"
 import { DevNav } from "@/components/layout/dev-nav"
+import { LogoutButton } from "@/components/home/logout-button"
 import "./globals.css"
 
 const inter = Inter({
@@ -26,6 +27,7 @@ export default function RootLayout({
         className={`${inter.className} flex h-dvh min-h-0 flex-col overflow-hidden bg-background font-sans antialiased`}
       >
         <AppShell>{children}</AppShell>
+        <LogoutButton />
         <DevNav />
       </body>
     </html>

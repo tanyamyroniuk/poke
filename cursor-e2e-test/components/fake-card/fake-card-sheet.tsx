@@ -33,6 +33,8 @@ export type FakeCardSheetProps = {
   cardName?: string
   verdictLabel?: string
   setLine?: string
+  /** Short friendly intro about the card, shown under the verdict badge. */
+  intro?: string
   introLines?: readonly string[]
   discrepancies?: ReadonlyArray<{ title: string; description: string }>
   /** Called when user discards the result. */
@@ -52,6 +54,7 @@ export function FakeCardSheet({
   cardName = "Charizard",
   verdictLabel = "Fake – 87.4%",
   setLine = "Base Set, 2010",
+  intro,
   introLines = INTRO_LINES,
   discrepancies = DEFAULT_DISCREPANCIES,
   onDiscard: onDiscardProp,
@@ -75,15 +78,17 @@ export function FakeCardSheet({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 pt-6">
-        <FakeCardStatusHeader cardName={cardName} verdictLabel={verdictLabel} setLine={setLine} />
+        <FakeCardStatusHeader cardName={cardName} verdictLabel={verdictLabel} setLine={setLine} intro={intro} />
 
-        <div className="mt-8 space-y-0 text-base font-medium leading-6 text-[#191c1d]">
-          {introLines.map((line, i) => (
-            <p key={i} className="mb-0">
-              {line}
-            </p>
-          ))}
-        </div>
+        {!intro && (
+          <div className="mt-8 space-y-0 text-base font-medium leading-6 text-[#191c1d]">
+            {introLines.map((line, i) => (
+              <p key={i} className="mb-0">
+                {line}
+              </p>
+            ))}
+          </div>
+        )}
 
         <p className="mt-8 font-mono text-xs font-medium uppercase leading-none tracking-normal text-gray-500">
           AI Analysis details

@@ -6,7 +6,6 @@ import { FileUploader } from "@/components/home/file-uploader"
 import { OrSeparator } from "@/components/home/or-separator"
 import { CameraButton } from "@/components/home/camera-button"
 import { BottomNav } from "@/components/home/bottom-nav"
-
 export default function HomePage() {
   const router = useRouter()
 

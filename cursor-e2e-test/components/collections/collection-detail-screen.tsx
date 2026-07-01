@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Search, CircleCheck, Layers, MoreVertical, Trash2 } from "lucide-react"
+import { ArrowLeft, Search, CircleCheck, Layers, MoreVertical, Trash2, Image as ImageIcon, RotateCcw } from "lucide-react"
+import { rangeFromAnalysisJson } from "@/lib/card-value"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -15,12 +16,14 @@ type CardItem = {
   imageUrl: string | null
   estimatedValue: number | null
   authenticityScore: number | null
+  analysisJson: string | null
   scannedAt: string
 }
 
 type CollectionData = {
   id: string
   name: string
+  thumbnailCardId: string | null
   cards: CardItem[]
 }
 
@@ -35,6 +38,14 @@ function formatPrice(value: number | null) {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(value)
+}
+
+/** Price line shown on a card tile — prefers the LLM's full range, then a parsed value. */
+function priceLabel(card: CardItem): string {
+  const range = rangeFromAnalysisJson(card.analysisJson)
+  if (range) return range
+  if (card.estimatedValue !== null) return `from ${formatPrice(card.estimatedValue)}`
+  return "Value unknown"
 }
 
 // ---------------------------------------------------------------------------
@@ -61,7 +72,19 @@ function AuthBadge({ score, isOriginal }: { score: number | null; isOriginal: bo
   )
 }
 
-function CardTile({ card, onDelete }: { card: CardItem; onDelete: (id: string) => void }) {
+function CardTile({
+  card,
+  collectionId,
+  isThumbnail,
+  onDelete,
+  onThumbnailChange,
+}: {
+  card: CardItem
+  collectionId: string
+  isThumbnail: boolean
+  onDelete: (id: string) => void
+  onThumbnailChange: (thumbnailCardId: string | null) => void
+}) {
   const [menuOpen, setMenuOpen] = useState(false)
   const year = new Date(card.scannedAt).getFullYear()
 
@@ -72,11 +95,25 @@ function CardTile({ card, onDelete }: { card: CardItem; onDelete: (id: string) =
     onDelete(card.id)
   }
 
+  async function setThumbnail(e: React.MouseEvent, thumbnailCardId: string | null) {
+    e.preventDefault()
+    e.stopPropagation()
+    setMenuOpen(false)
+    await fetch(`/api/collections/${collectionId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ thumbnailCardId }),
+    })
+    onThumbnailChange(thumbnailCardId)
+  }
+
   function toggleMenu(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
     setMenuOpen((v) => !v)
   }
+
+  const canSetThumbnail = !isThumbnail && Boolean(card.imageUrl)
 
   return (
     <div className="relative rounded-xl bg-slate-100 transition-shadow hover:shadow-md">
@@ -99,7 +136,7 @@ function CardTile({ card, onDelete }: { card: CardItem; onDelete: (id: string) =
 
         <div className="flex w-full flex-col gap-1.5 px-0.5">
           <p className="text-base font-medium leading-normal text-black">{card.pokemonName}, {year}</p>
-          <p className="text-sm font-medium leading-none text-gray-500">from {formatPrice(card.estimatedValue)}</p>
+          <p className="text-sm font-medium leading-none text-gray-500">{priceLabel(card)}</p>
         </div>
       </Link>
 
@@ -115,7 +152,27 @@ function CardTile({ card, onDelete }: { card: CardItem; onDelete: (id: string) =
 
       {/* Dropdown */}
       {menuOpen && (
-        <div className="absolute bottom-9 right-2 z-30 min-w-[130px] rounded-xl border border-neutral-100 bg-white py-1 shadow-lg">
+        <div className="absolute bottom-9 right-2 z-30 min-w-[190px] rounded-xl border border-neutral-100 bg-white py-1 shadow-lg">
+          {canSetThumbnail && (
+            <button
+              type="button"
+              onClick={(e) => setThumbnail(e, card.id)}
+              className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <ImageIcon className="size-4" strokeWidth={2} />
+              Use as thumbnail
+            </button>
+          )}
+          {isThumbnail && (
+            <button
+              type="button"
+              onClick={(e) => setThumbnail(e, null)}
+              className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <RotateCcw className="size-4" strokeWidth={2} />
+              Restore default thumbnail
+            </button>
+          )}
           <button
             type="button"
             onClick={handleDelete}
@@ -146,8 +203,19 @@ export function CollectionDetailScreen({ collectionId }: { collectionId: string 
   function handleDeleteCard(cardId: string) {
     setCollection((prev) =>
       prev && prev !== "loading"
-        ? { ...prev, cards: prev.cards.filter((c) => c.id !== cardId) }
+        ? {
+            ...prev,
+            cards: prev.cards.filter((c) => c.id !== cardId),
+            // If the cover card is removed, fall back to default.
+            thumbnailCardId: prev.thumbnailCardId === cardId ? null : prev.thumbnailCardId,
+          }
         : prev,
+    )
+  }
+
+  function handleThumbnailChange(thumbnailCardId: string | null) {
+    setCollection((prev) =>
+      prev && prev !== "loading" ? { ...prev, thumbnailCardId } : prev,
     )
   }
 
@@ -212,7 +280,14 @@ export function CollectionDetailScreen({ collectionId }: { collectionId: string 
         ) : (
           <div className="mt-8 grid grid-cols-2 gap-4 pb-10">
             {collection.cards.map((card) => (
-              <CardTile key={card.id} card={card} onDelete={handleDeleteCard} />
+              <CardTile
+                key={card.id}
+                card={card}
+                collectionId={collection.id}
+                isThumbnail={collection.thumbnailCardId === card.id}
+                onDelete={handleDeleteCard}
+                onThumbnailChange={handleThumbnailChange}
+              />
             ))}
           </div>
         )}

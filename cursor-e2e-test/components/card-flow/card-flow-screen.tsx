@@ -123,10 +123,16 @@ export function CardFlowScreen() {
 
       {step === "original" && (
         <OriginalCardSheet
-          cardName={aiResult?.cardName}
+          cardName={aiResult?.cardName !== "unknown" ? aiResult?.cardName : undefined}
           verdictLabel={verdictLabel}
-          setLine={aiResult?.setName !== "unknown" ? `${aiResult?.setName}` : undefined}
+          setLine={aiResult?.setName && aiResult.setName !== "unknown" ? aiResult.setName : undefined}
+          intro={aiResult?.cardIntro || undefined}
           collectorPrice={aiResult?.estimatedValueRange !== "unknown" ? aiResult?.estimatedValueRange : undefined}
+          conditionScore={aiResult?.conditionScore}
+          rarity={aiResult?.rarity !== "unknown" ? aiResult?.rarity : undefined}
+          setNumber={aiResult?.cardNumber !== "unknown" ? aiResult?.cardNumber : undefined}
+          cardType={aiResult?.cardType !== "unknown" ? aiResult?.cardType : undefined}
+          checkItems={aiResult?.positiveIndicators}
           aboutText={aiResult?.funFact !== "unknown" ? aiResult?.funFact : undefined}
           onSave={() => transitionTo("save")}
           onDiscard={() => router.push("/home")}
@@ -138,6 +144,7 @@ export function CardFlowScreen() {
           cardName={aiResult?.cardName}
           verdictLabel={verdictLabel}
           setLine={aiResult?.setName !== "unknown" ? aiResult?.setName : undefined}
+          intro={aiResult?.cardIntro || undefined}
           discrepancies={
             aiResult?.suspiciousIndicators?.length
               ? aiResult.suspiciousIndicators.map((s) => ({ title: s, description: "" }))
