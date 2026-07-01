@@ -73,7 +73,13 @@ export default function CardProfilePage({ params }: { params: Promise<{ id: stri
             cardName={analysis.cardName && analysis.cardName !== "unknown" ? analysis.cardName : card.pokemonName}
             verdictLabel={scoreLabel}
             setLine={setLine}
+            intro={analysis.cardIntro || undefined}
             collectorPrice={collectorPrice}
+            conditionScore={analysis.conditionScore}
+            rarity={analysis.rarity && analysis.rarity !== "unknown" ? analysis.rarity : undefined}
+            setNumber={analysis.cardNumber && analysis.cardNumber !== "unknown" ? analysis.cardNumber : undefined}
+            cardType={analysis.cardType && analysis.cardType !== "unknown" ? analysis.cardType : undefined}
+            checkItems={analysis.positiveIndicators}
             aboutText={aboutText}
             viewOnly
           />
@@ -82,6 +88,7 @@ export default function CardProfilePage({ params }: { params: Promise<{ id: stri
             cardName={analysis.cardName && analysis.cardName !== "unknown" ? analysis.cardName : card.pokemonName}
             verdictLabel={scoreLabel}
             setLine={setLine}
+            intro={analysis.cardIntro || undefined}
             discrepancies={discrepancies}
             viewOnly
           />

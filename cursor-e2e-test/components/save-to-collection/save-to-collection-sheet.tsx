@@ -12,17 +12,11 @@ import {
 } from "@/components/save-to-collection/collection-picker"
 import { NewCollectionForm } from "@/components/save-to-collection/new-collection-form"
 import type { CardAnalysisResult } from "@/lib/types/card-analysis"
+import { lowerBoundFromRange } from "@/lib/card-value"
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function parseEstimatedValue(range: string | undefined): number | null {
-  if (!range || range === "unknown") return null
-  const match = range.match(/\$?([\d,]+)/)
-  if (!match) return null
-  return parseInt(match[1].replace(/,/g, ""), 10)
-}
 
 function compressImage(dataUrl: string, maxPx = 800, quality = 0.7): Promise<string> {
   return new Promise((resolve) => {
@@ -139,7 +133,7 @@ export function SaveToCollectionSheet({
     const imageUrl = raw ? await compressImage(raw) : null
     const storedAnalysis = sessionStorage.getItem("cardAnalysisResult")
     const analysis: Partial<CardAnalysisResult> = storedAnalysis ? JSON.parse(storedAnalysis) : {}
-    const estimatedValue = parseEstimatedValue(analysis.estimatedValueRange)
+    const estimatedValue = lowerBoundFromRange(analysis.estimatedValueRange)
     await fetch("/api/cards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

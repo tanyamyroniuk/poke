@@ -8,11 +8,14 @@ datasource db {
 }
 
 model Collection {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  cards     Card[]
+  id              String   @id @default(cuid())
+  name            String
+  userId          String   @default("demo")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  cards           Card[]
+  /// Card chosen as the cover thumbnail. Null = use the first card (default).
+  thumbnailCardId String?
 }
 
 model Card {

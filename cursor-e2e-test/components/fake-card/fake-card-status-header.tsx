@@ -7,6 +7,7 @@ export type FakeCardStatusHeaderProps = {
   verdictLabel: string
   /** e.g. "Base Set, 2010" */
   setLine?: string
+  intro?: string
   className?: string
 }
 
@@ -15,6 +16,7 @@ export function FakeCardStatusHeader({
   cardName,
   verdictLabel,
   setLine,
+  intro,
   className,
 }: FakeCardStatusHeaderProps) {
   return (
@@ -29,6 +31,9 @@ export function FakeCardStatusHeader({
         <CircleX className="size-5 shrink-0 text-red-700" strokeWidth={2} aria-hidden />
         <p className="text-xl font-semibold leading-7 text-red-700">{verdictLabel}</p>
       </div>
+      {intro ? (
+        <p className="whitespace-pre-line text-base font-normal leading-relaxed text-[#191c1d]">{intro}</p>
+      ) : null}
     </div>
   )
 }

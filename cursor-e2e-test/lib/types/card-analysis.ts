@@ -4,6 +4,8 @@ export type CardAnalysisResultType =
   | "pokemon_fake"
   | "unknown"
 
+export type VerificationStatus = "verified" | "not_verified" | "inconclusive"
+
 export type CardAnalysisResult = {
   resultType: CardAnalysisResultType
   cardName: string
@@ -19,8 +21,22 @@ export type CardAnalysisResult = {
   estimatedValueRange: string
   positiveIndicators: string[]
   suspiciousIndicators: string[]
+  cardIntro: string
   funFact: string
   userMessage: string
+  verificationStatus?: VerificationStatus
+  verificationNotes?: string
+  sourcesUsed?: string[]
+}
+
+/** Map a 0–100 conditionScore to a human-readable grade label. */
+export function conditionLabelFromScore(score?: number | null): string {
+  if (score == null || score <= 0) return "Unknown"
+  if (score >= 90) return "Gem Mint"
+  if (score >= 75) return "Near Mint"
+  if (score >= 55) return "Excellent"
+  if (score >= 35) return "Good"
+  return "Poor"
 }
 
 export const FALLBACK_RESULT: CardAnalysisResult = {
@@ -38,6 +54,7 @@ export const FALLBACK_RESULT: CardAnalysisResult = {
   estimatedValueRange: "unknown",
   positiveIndicators: [],
   suspiciousIndicators: [],
+  cardIntro: "",
   funFact: "unknown",
   userMessage: "We could not confidently verify this card.",
 }
