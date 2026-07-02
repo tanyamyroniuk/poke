@@ -74,10 +74,13 @@ export function SaveToCollectionSheet({
       .then((res) => res.json())
       .then((data: Collection[]) => {
         setCollections(data)
-        // Pre-select based on card result type
+        // Pre-select based on card result type — match by name since IDs are user-scoped
         const type = typeof window !== "undefined" ? sessionStorage.getItem("cardResultType") : null
-        const preferred = type === "fake" ? "fake-cards" : "original-cards"
-        const found = data.find((c) => c.id === preferred)
+        const found = data.find((c) =>
+          type === "fake"
+            ? c.name.toLowerCase().includes("fake")
+            : c.name.toLowerCase().includes("original"),
+        )
         setSelectedId(found?.id ?? data[0]?.id ?? "")
       })
   }, [initialCollections])
@@ -86,9 +89,12 @@ export function SaveToCollectionSheet({
   useEffect(() => {
     if (!initialCollections || initialCollections.length === 0) return
     const type = typeof window !== "undefined" ? sessionStorage.getItem("cardResultType") : null
-    if (type === "original") setSelectedId("original-cards")
-    else if (type === "fake") setSelectedId("fake-cards")
-    else setSelectedId(initialCollections[0]?.id ?? "")
+    const found = initialCollections.find((c) =>
+      type === "fake"
+        ? c.name.toLowerCase().includes("fake")
+        : c.name.toLowerCase().includes("original"),
+    )
+    setSelectedId(found?.id ?? initialCollections[0]?.id ?? "")
   }, [initialCollections])
 
   const selectedCollection = collections.find((c) => c.id === selectedId) ?? collections[0]

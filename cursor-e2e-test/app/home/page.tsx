@@ -10,14 +10,31 @@ export default function HomePage() {
   const router = useRouter()
 
   function handleFileSelect(file: File) {
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        sessionStorage.setItem("capturedCardImage", reader.result)
-        router.push("/analysis")
+    const objectUrl = URL.createObjectURL(file)
+    const img = new window.Image()
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl)
+      const MAX_DIM = 900
+      let { width, height } = img
+      if (width > MAX_DIM || height > MAX_DIM) {
+        if (width > height) {
+          height = Math.round(height * (MAX_DIM / width))
+          width = MAX_DIM
+        } else {
+          width = Math.round(width * (MAX_DIM / height))
+          height = MAX_DIM
+        }
       }
+      const canvas = document.createElement("canvas")
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext("2d")!
+      ctx.drawImage(img, 0, 0, width, height)
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.82)
+      sessionStorage.setItem("capturedCardImage", dataUrl)
+      router.push("/analysis")
     }
-    reader.readAsDataURL(file)
+    img.src = objectUrl
   }
 
   return (
