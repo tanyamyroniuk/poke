@@ -11,6 +11,7 @@ import { FakeCardSheet } from "@/components/fake-card/fake-card-sheet"
 import { SaveToCollectionSheet } from "@/components/save-to-collection/save-to-collection-sheet"
 import { SHEET_HEIGHT_PX } from "@/components/card-screen/constants"
 import type { CardAnalysisResult } from "@/lib/types/card-analysis"
+import { pickNotPokemonMessage } from "@/lib/not-pokemon-messages"
 import pokecardMock from "@/app/assets/mocks/pokecard2.jpg"
 
 // ---------------------------------------------------------------------------
@@ -34,7 +35,7 @@ const STEP_CONFIG: Record<FlowStep, StepConfig> = {
   analysis:         { heroHeightPercent: 60, sheetHeightPx: SHEET_HEIGHT_PX },
   original:         { heroHeightPx: 200 },
   fake:             { heroHeightPx: 200 },
-  not_pokemon_card: { heroHeightPx: 200 },
+  not_pokemon_card: { heroHeightPx: 450 },
   unknown:          { heroHeightPx: 200 },
   save:             { heroHeightPx: 280 },
 }
@@ -61,6 +62,7 @@ export function CardFlowScreen() {
   const [analysisStep, setAnalysisStep] = useState(0)
   const [aiResult, setAiResult] = useState<CardAnalysisResult | null>(null)
   const [aiError, setAiError] = useState(false)
+  const [notPokemonMsg, setNotPokemonMsg] = useState(pickNotPokemonMessage)
 
   // Load image and kick off AI analysis immediately on mount
   useEffect(() => {
@@ -94,6 +96,7 @@ export function CardFlowScreen() {
     const resultType = next === "original" ? "original" : "fake"
     sessionStorage.setItem("cardResultType", resultType)
     if (result) sessionStorage.setItem("cardAnalysisResult", JSON.stringify(result))
+    if (next === "not_pokemon_card") setNotPokemonMsg(pickNotPokemonMessage(result?.imageCategory))
     setResultStep(next)
     const id = window.setTimeout(() => transitionTo(next), 500)
     return () => window.clearTimeout(id)
@@ -156,18 +159,26 @@ export function CardFlowScreen() {
       )}
 
       {step === "not_pokemon_card" && (
-        <div className="flex h-full flex-col items-center justify-center gap-4 px-6 pb-10 text-center">
-          <p className="text-2xl font-semibold text-[#171717]">Not a Pokémon card</p>
-          <p className="text-base text-slate-500">
-            {aiResult?.userMessage ?? "This doesn't look like a readable Pokémon TCG card. Try a clearer photo."}
-          </p>
-          <Button
-            type="button"
-            className="mt-4 h-14 w-full rounded-2xl border-0 bg-[#dc2626] text-base font-medium text-white hover:bg-[#b91c1c]"
-            onClick={() => router.push("/home")}
-          >
-            Try Again
-          </Button>
+        <div className="flex h-full flex-col">
+          <div className="flex min-h-0 flex-1 flex-col items-center px-6 pt-[72px] text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/ico-no-poke.svg" alt="" className="size-32 mb-10" />
+            <p className="text-[30px] font-medium leading-9 text-black mb-4 max-w-[392px]">
+              {notPokemonMsg.header}
+            </p>
+            <p className="text-base leading-6 text-slate-500 max-w-[364px]">
+              {notPokemonMsg.subtext}
+            </p>
+          </div>
+          <div className="shrink-0 px-6 pb-10 pt-4">
+            <Button
+              type="button"
+              className="h-16 w-full rounded-2xl border-0 bg-gray-100 text-lg font-medium text-black hover:bg-gray-200"
+              onClick={() => router.push("/home")}
+            >
+              Take a new photo
+            </Button>
+          </div>
         </div>
       )}
 

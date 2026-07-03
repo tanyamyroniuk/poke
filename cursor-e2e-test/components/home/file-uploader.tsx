@@ -67,7 +67,7 @@ export function FileUploader({
 
       <div className="flex flex-col items-center gap-3 text-center w-full">
         <p className="text-xl font-medium text-[#101111] leading-7">
-          Click to upload your card image
+          Click to upload
         </p>
         <p className="text-sm text-[#7d7d7d] leading-[21px]">
           JPEG or PNG up to {maxSizeMB}MB

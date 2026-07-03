@@ -8,28 +8,25 @@ export type AnalysisStepRowProps = {
   label: string
   title: string
   status: AnalysisStepStatus
-  /** Icon in the left circle when pending or completed (completed reuses this). */
   pendingLeft: ReactNode
-  /** Icon when step is active (often accent-colored). */
   activeLeft: ReactNode
+  completedLeft: ReactNode
   className?: string
 }
 
-/**
- * Single row in the analysis progress list: pending (grey), active (spinner), or completed (check).
- */
 export function AnalysisStepRow({
   label,
   title,
   status,
   pendingLeft,
   activeLeft,
+  completedLeft,
   className,
 }: AnalysisStepRowProps) {
   const completed = status === "completed"
   const active = status === "active"
 
-  const leftIcon = completed ? pendingLeft : active ? activeLeft : pendingLeft
+  const leftIcon = completed ? completedLeft : active ? activeLeft : pendingLeft
 
   const trailing = completed ? (
     <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-100">
@@ -55,7 +52,8 @@ export function AnalysisStepRow({
         className={cn(
           "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors duration-300",
           active && "bg-[#fee2e2]",
-          !active && "bg-[#eff4f6]",
+          completed && "bg-emerald-100",
+          !active && !completed && "bg-[#eff4f6]",
         )}
       >
         {leftIcon}
@@ -69,7 +67,7 @@ export function AnalysisStepRow({
       >
         <p
           className={cn(
-            "w-full text-xs font-normal leading-7",
+            "w-full text-xs font-normal leading-[22px]",
             completed && "text-emerald-700",
             active && "text-[#6b7280]",
             !active && !completed && "text-[#9ca3af]",
