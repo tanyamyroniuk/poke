@@ -77,7 +77,7 @@ export default function LoginPage() {
           </div>
 
           <div className="pt-6">
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            <Button type="submit" className="w-full h-16 rounded-2xl text-lg font-medium" disabled={loading}>
               {loading ? "Signing in…" : "Sign in"}
             </Button>
           </div>
