@@ -42,8 +42,8 @@ export default function LoginPage() {
         <img src="/loader.svg" alt="Pokéball" className="size-16 mb-6" />
 
         <div className="w-full text-center mb-6">
-          <h1 className="text-2xl font-bold text-[#171717]">Sign in</h1>
-          <p className="mt-1 text-sm text-slate-500">Enter your username and password</p>
+          <h1 className="text-[40px] font-semibold text-accent-foreground tracking-[-0.8px] leading-[48px]">Sign in</h1>
+          <p className="text-base text-muted-foreground leading-6">Enter your username and password</p>
         </div>
 
         <form onSubmit={handleLogin} className="w-full space-y-4" autoComplete="off">
