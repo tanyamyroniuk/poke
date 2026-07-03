@@ -37,13 +37,18 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-full flex-col items-center justify-center bg-slate-100 px-8">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-[#171717]">Sign in</h1>
-        <p className="mt-1 text-sm text-slate-500">Enter your username and password</p>
+      <div className="w-full max-w-sm flex flex-col items-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/loader.svg" alt="Pokéball" className="size-16 mb-6" />
 
-        <form onSubmit={handleLogin} className="mt-6 space-y-4" autoComplete="off">
+        <div className="w-full text-center mb-6">
+          <h1 className="text-[40px] font-semibold text-accent-foreground tracking-[-0.8px] leading-[48px]">Sign in</h1>
+          <p className="text-base text-muted-foreground leading-6">Enter your username and password</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="w-full space-y-4" autoComplete="off">
           {error && (
-            <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+            <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600 text-center">{error}</p>
           )}
           <div className="space-y-1.5">
             <label htmlFor="username" className="text-sm font-medium text-gray-700">Username</label>
@@ -72,7 +77,7 @@ export default function LoginPage() {
           </div>
 
           <div className="pt-6">
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            <Button type="submit" className="w-full h-16 rounded-2xl text-lg font-medium" disabled={loading}>
               {loading ? "Signing in…" : "Sign in"}
             </Button>
           </div>

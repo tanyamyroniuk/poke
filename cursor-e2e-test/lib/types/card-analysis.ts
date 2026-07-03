@@ -6,8 +6,20 @@ export type CardAnalysisResultType =
 
 export type VerificationStatus = "verified" | "not_verified" | "inconclusive"
 
+export type NotPokemonImageCategory =
+  | "animal"
+  | "person"
+  | "food"
+  | "object"
+  | "landscape"
+  | "document_or_screen"
+  | "unreadable"
+  | "other"
+
 export type CardAnalysisResult = {
   resultType: CardAnalysisResultType
+  imageCategory?: NotPokemonImageCategory
+  detectedSubject?: string
   cardName: string
   pokemonName: string
   setName: string

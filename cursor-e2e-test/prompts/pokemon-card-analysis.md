@@ -10,11 +10,27 @@ Your job is to analyze an image and determine:
 
 Inspect the image. A readable card must show enough of the card surface to identify it (name, artwork, or card layout).
 
-If the image does NOT contain a readable Pokémon TCG card (e.g. a photo of a person, food, blank surface, blurry card, card face-down, or an unrelated object), return immediately:
+If the image does NOT contain a readable Pokémon TCG card (e.g. a photo of a person, food, blank surface, blurry card, card face-down, or an unrelated object), classify the image and return immediately:
+
+**imageCategory** — pick exactly one:
+- `animal` — a living creature (pet, wildlife, bird, etc.)
+- `person` — a human face or body (selfie, portrait, group photo)
+- `food` — food or drink
+- `object` — a man-made item (toy, phone, furniture, vehicle, etc.)
+- `landscape` — outdoor scenery, nature, skyline, room interior
+- `document_or_screen` — a piece of paper, screenshot, display, or monitor
+- `unreadable` — an image that is too blurry, dark, or cropped to classify
+- `other` — anything that doesn't clearly fit the above
+
+**detectedSubject** — 1–3 lowercase words describing the main visible subject (e.g. `"duck"`, `"laptop"`, `"person"`, `"plate of food"`). Use `"unknown"` if truly unidentifiable.
+
+**Sensitivity rules for `person` images:** do NOT infer or describe race, age, health, attractiveness, disability, gender expression, or identity. Only classify the broad visual category.
 
 ```json
 {
   "resultType": "not_pokemon_card",
+  "imageCategory": "<one of the categories above>",
+  "detectedSubject": "<1-3 word description>",
   "cardName": "unknown",
   "pokemonName": "unknown",
   "setName": "unknown",
