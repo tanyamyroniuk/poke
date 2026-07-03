@@ -39,20 +39,11 @@ export default function HomePage() {
 
   return (
     <main className="flex min-h-full flex-col bg-white">
-      <div className="relative w-full flex flex-col flex-1 px-8 pt-6 pb-4 mx-auto">
-        <div className="mt-6">
-          <HeroSection />
-        </div>
-
-        <div className="mt-12">
+      <div className="relative w-full flex flex-col flex-1 justify-center px-8 py-6 mx-auto gap-12">
+        <HeroSection />
+        <div className="flex flex-col gap-6">
           <FileUploader onFileSelect={handleFileSelect} />
-        </div>
-
-        <div className="mt-6">
           <OrSeparator />
-        </div>
-
-        <div className="mt-6">
           <CameraButton href="/camera-screen" />
         </div>
       </div>
