@@ -129,7 +129,7 @@ function CollectionCard({
 
 export function CollectionsScreen() {
   const router = useRouter()
-  const [collections, setCollections] = useState<Collection[]>([])
+  const [collections, setCollections] = useState<Collection[] | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [newName, setNewName] = useState("")
 
@@ -161,11 +161,21 @@ export function CollectionsScreen() {
     setCollections((prev) => prev.filter((c) => c.id !== id))
   }
 
-  const totalValue = collections.reduce((sum, c) => sum + c.totalValue, 0)
+  const loaded = collections !== null
+  const totalValue = (collections ?? []).reduce((sum, c) => sum + c.totalValue, 0)
 
   return (
     <main className="relative flex min-h-full flex-col bg-white">
-      <div className="mx-auto flex w-full flex-1 flex-col px-8 pb-8 pt-14">
+      {!loaded && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/loader.svg" alt="Loading" className="size-14 animate-spin" style={{ animationDirection: "normal" }} />
+        </div>
+      )}
+      <div
+        className="mx-auto flex w-full flex-1 flex-col px-8 pb-8 pt-14 transition-opacity duration-500"
+        style={{ opacity: loaded ? 1 : 0 }}
+      >
 
         <h1 className="text-[40px] font-semibold leading-[48px] tracking-[-0.8px] text-[#171717]">
           Collections
