@@ -191,7 +191,7 @@ export function CollectionsScreen() {
         </div>
 
         <div className="mt-8 flex flex-col gap-8">
-          {collections.map((c) => (
+          {(collections ?? []).map((c) => (
             <CollectionCard key={c.id} collection={c} onDelete={handleDeleteCollection} />
           ))}
         </div>
