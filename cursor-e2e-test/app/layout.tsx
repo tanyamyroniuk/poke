@@ -3,7 +3,6 @@ import { Inter } from "next/font/google"
 import { AppShell } from "@/components/layout/app-shell"
 import { DevNav } from "@/components/layout/dev-nav"
 import { LogoutButton } from "@/components/home/logout-button"
-import { PageLoader } from "@/components/page-loader"
 import "./globals.css"
 
 const inter = Inter({
@@ -27,22 +26,6 @@ export default function RootLayout({
       <body
         className={`${inter.className} flex h-dvh min-h-0 flex-col overflow-hidden bg-background font-sans antialiased`}
       >
-        <div
-          id="page-loader"
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 9999,
-            background: "white",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/loader.svg" alt="" width={56} height={56} />
-        </div>
-        <PageLoader />
         <AppShell>{children}</AppShell>
         <LogoutButton />
         <DevNav />
