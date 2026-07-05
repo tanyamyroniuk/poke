@@ -146,7 +146,7 @@ export function CardFlowScreen() {
         <FakeCardSheet
           cardName={aiResult?.cardName}
           verdictLabel={verdictLabel}
-          setLine={aiResult?.setName !== "unknown" ? aiResult?.setName : undefined}
+          setLine={aiResult?.setName && aiResult.setName !== "unknown" && !aiResult.setName.toLowerCase().startsWith("japanese") ? aiResult.setName : undefined}
           intro={aiResult?.cardIntro || undefined}
           discrepancies={
             aiResult?.suspiciousIndicators?.length
