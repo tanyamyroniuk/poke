@@ -39,8 +39,6 @@ export default function RootLayout({
             justifyContent: "center",
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element, react/no-danger */}
-          <style dangerouslySetInnerHTML={{ __html: "@keyframes poke-spin{to{transform:rotate(360deg)}} #page-loader img{animation:poke-spin 1s linear infinite}" }} />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/loader.svg" alt="" width={56} height={56} />
         </div>
