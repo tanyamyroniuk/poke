@@ -7,7 +7,15 @@ export function LogoutButton() {
   const router = useRouter()
   const pathname = usePathname()
 
-  if (pathname === "/login") return null
+  const hidden =
+    pathname === "/login" ||
+    pathname.startsWith("/collections/") ||
+    pathname.startsWith("/cards/") ||
+    pathname === "/analysis" ||
+    pathname === "/original-card" ||
+    pathname === "/fake-card"
+
+  if (hidden) return null
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" })

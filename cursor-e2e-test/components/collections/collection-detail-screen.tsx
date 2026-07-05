@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Search, CircleCheck, Layers, MoreVertical, Trash2, Image as ImageIcon, RotateCcw } from "lucide-react"
+import { ArrowLeft, Plus, Search, CircleCheck, Layers, MoreVertical, Trash2, Image as ImageIcon, RotateCcw } from "lucide-react"
 import { rangeFromAnalysisJson } from "@/lib/card-value"
 
 // ---------------------------------------------------------------------------
@@ -292,6 +292,14 @@ export function CollectionDetailScreen({ collectionId }: { collectionId: string 
           </div>
         )}
       </div>
+
+      <Link
+        href="/home"
+        aria-label="Scan a card"
+        className="fixed bottom-8 right-8 z-40 flex size-14 items-center justify-center rounded-full bg-[#dc2626] text-white shadow-[0px_10px_30px_-5px_rgba(169,50,0,0.4)] transition-opacity hover:opacity-90"
+      >
+        <Plus className="size-[18px]" strokeWidth={2.5} />
+      </Link>
     </main>
   )
 }
