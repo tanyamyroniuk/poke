@@ -61,13 +61,29 @@ Do NOT proceed further for non-card images.
 
 Read every visible detail from the card image:
 
-- **cardName**: Full printed name (e.g. "Charizard VMAX", "Pikachu", "Mewtwo GX"). Use "unknown" if unreadable.
-- **pokemonName**: Base Pokémon name without suffixes (e.g. "Charizard"). Use "unknown" if unreadable.
-- **setName**: Set name or series (e.g. "Base Set", "Scarlet & Violet"). Use "unknown" if not visible.
+- **cardName**: Full card name in **English** (e.g. "Charizard VMAX", "Pikachu", "Mewtwo GX"). Use "unknown" only if you truly cannot identify the Pokémon at all — see non-English card rules below.
+- **pokemonName**: Base Pokémon name in **English**, without suffixes (e.g. "Charizard"). Use "unknown" only as a last resort.
+- **setName**: Set name or series in English (e.g. "Japanese Base Set", "Japanese Scarlet & Violet — Ancient Roar"). Use "unknown" if not determinable.
 - **cardNumber**: Card number in the set (e.g. "4/102", "025/198"). Use "unknown" if not visible.
 - **rarity**: The card's rarity grade. You MUST return exactly one of the allowed values listed below — see "Determining rarity". Use "Unknown" if you cannot tell.
 - **hp**: HP value printed on the card. Use "unknown" if not visible.
 - **cardType**: Primary type(s) (e.g. "Fire", "Water", "Psychic"). Use "unknown" if not visible.
+
+### Non-English cards (Japanese, Korean, Chinese, etc.)
+
+Many authentic Pokémon TCG cards are printed in Japanese, Korean, or Chinese. When the card text is not in English:
+
+1. **Always return English names.** `cardName` and `pokemonName` MUST always be in English — never return Japanese kana/kanji, Korean hangul, or Chinese characters as the card name. Translate or identify the Pokémon using visual recognition and web search.
+
+2. **Identify from artwork and card data first.** The Pokémon's visual design, HP, type, attack names, and card number are enough to identify most Pokémon even without reading the printed name. Compare what you see against your knowledge of the Pokémon franchise.
+
+3. **Use web search to confirm and translate.** Search for the card number and any set code visible on the card combined with terms like "Japanese Pokémon card" or "Pokémon TCG Japan". Reliable databases (Bulbapedia, TCGPlayer, serebii) list Japanese sets and their English equivalents. For example: "026/064 Japanese Pokémon card" or "054/078 Japanese Scarlet Violet".
+
+4. **Mechanic suffixes translate directly.** Japanese `ex` cards are still `ex` in English. `V`, `VMAX`, `VSTAR`, `GX` appear the same in Japanese sets — keep the English suffix in `cardName` (e.g. return "Wo-Chien ex", not "バルデアドオー ex").
+
+5. **If the Pokémon cannot be identified despite the above steps**, return `cardName: "unknown"` and `pokemonName: "unknown"` — but this should be rare. Most Japanese cards can be identified by their artwork + card number alone.
+
+6. **`setName`** for non-English cards should describe the Japanese/Korean/Chinese release: e.g. `"Japanese Scarlet & Violet — Ancient Roar"`, `"Japanese Base Set"`, or simply `"Japanese Pokémon TCG"` if the exact set is unclear.
 
 ### Determining rarity
 
