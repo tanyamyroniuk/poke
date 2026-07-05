@@ -144,7 +144,7 @@ export function SaveToCollectionSheet({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        pokemonName: analysis.pokemonName && analysis.pokemonName !== "unknown" ? analysis.pokemonName : "Scanned Card",
+        pokemonName: analysis.pokemonName && analysis.pokemonName !== "unknown" ? analysis.pokemonName : "Unknown Pokémon",
         isOriginal,
         collectionId: selectedId || null,
         imageUrl,

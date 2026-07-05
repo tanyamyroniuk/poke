@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
   const card = await prisma.card.create({
     data: {
-      pokemonName: pokemonName ?? "Scanned Card",
+      pokemonName: pokemonName ?? "Unknown Pokémon",
       isOriginal: Boolean(isOriginal),
       collectionId: collectionId ?? null,
       imageUrl: imageUrl ?? null,
