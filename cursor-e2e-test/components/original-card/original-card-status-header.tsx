@@ -28,16 +28,12 @@ export function OriginalCardStatusHeader({
 }: OriginalCardStatusHeaderProps) {
   return (
     <div className={cn("flex w-full flex-col gap-4", className)}>
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="min-w-0 text-[30px] font-medium leading-9 text-black">{cardName}</h1>
-        {setLine ? (
-          <p className="shrink-0 whitespace-nowrap pt-0.5 text-sm leading-none text-gray-500">{setLine}</p>
-        ) : null}
-      </div>
-
-      <div className="flex w-fit items-center gap-1.5 rounded-md bg-[#d6f7e7] px-2.5 py-2.5">
-        <CircleCheck className="size-4 shrink-0 text-green-800" strokeWidth={2.5} aria-hidden />
-        <p className="text-base font-semibold leading-none text-green-800">{verdictLabel}</p>
+        <div className="flex shrink-0 items-center gap-1.5 rounded-md bg-[#d6f7e7] px-2.5 py-2.5">
+          <CircleCheck className="size-4 shrink-0 text-green-800" strokeWidth={2.5} aria-hidden />
+          <p className="text-base font-semibold leading-none text-green-800">{verdictLabel}</p>
+        </div>
       </div>
 
       {intro ? (

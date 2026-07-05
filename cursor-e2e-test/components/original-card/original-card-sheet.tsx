@@ -68,7 +68,7 @@ export function OriginalCardSheet({
   return (
     <div className="flex h-full min-h-0 flex-col">
       {/* Scrollable body */}
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 pt-6">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 pt-6 pb-12">
         <OriginalCardStatusHeader
           cardName={cardName}
           verdictLabel={verdictLabel}
@@ -102,13 +102,17 @@ export function OriginalCardSheet({
           )}
         </div>
 
-        {/* Market Trend */}
-        <p className="mt-8 font-mono text-xs font-medium uppercase leading-none tracking-normal text-gray-500">
-          Market trend
-        </p>
-        <div className="mt-3">
-          <MarketTrendChart />
-        </div>
+        {/* Market Trend — hidden until real data is wired up */}
+        {false && (
+          <>
+            <p className="mt-8 font-mono text-xs font-medium uppercase leading-none tracking-normal text-gray-500">
+              Market trend
+            </p>
+            <div className="mt-3">
+              <MarketTrendChart />
+            </div>
+          </>
+        )}
 
         {aboutText && (
           <>

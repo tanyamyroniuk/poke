@@ -128,7 +128,7 @@ export function CardFlowScreen() {
         <OriginalCardSheet
           cardName={aiResult?.cardName !== "unknown" ? aiResult?.cardName : undefined}
           verdictLabel={verdictLabel}
-          setLine={aiResult?.setName && aiResult.setName !== "unknown" ? aiResult.setName : undefined}
+          setLine={aiResult?.setName && aiResult.setName !== "unknown" && !aiResult.setName.toLowerCase().startsWith("japanese") ? aiResult.setName : undefined}
           intro={aiResult?.cardIntro || undefined}
           collectorPrice={aiResult?.estimatedValueRange !== "unknown" ? aiResult?.estimatedValueRange : undefined}
           conditionScore={aiResult?.conditionScore}
