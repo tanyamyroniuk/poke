@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { AppShell } from "@/components/layout/app-shell"
-import { DevNav } from "@/components/layout/dev-nav"
 import { LogoutButton } from "@/components/home/logout-button"
 import "./globals.css"
 
@@ -28,7 +27,6 @@ export default function RootLayout({
       >
         <AppShell>{children}</AppShell>
         <LogoutButton />
-        <DevNav />
       </body>
     </html>
   )

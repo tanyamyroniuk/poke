@@ -158,7 +158,7 @@ export function CollectionsScreen() {
   }
 
   function handleDeleteCollection(id: string) {
-    setCollections((prev) => prev.filter((c) => c.id !== id))
+    setCollections((prev) => (prev ? prev.filter((c) => c.id !== id) : prev))
   }
 
   const loaded = collections !== null
