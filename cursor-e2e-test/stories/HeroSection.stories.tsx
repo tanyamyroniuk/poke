@@ -11,7 +11,6 @@ const meta: Meta<typeof HeroSection> = {
   argTypes: {
     title: { control: 'text' },
     description: { control: 'text' },
-    iconSrc: { control: 'text' },
   },
 }
 

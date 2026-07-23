@@ -5,7 +5,15 @@ import OpenAI from "openai"
 import type { CardAnalysisResult } from "@/lib/types/card-analysis"
 import { FALLBACK_RESULT } from "@/lib/types/card-analysis"
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+// Without an explicit timeout the SDK waits up to 10 minutes; a hung
+// web-search request would leave the scan screen spinning that whole time.
+// Timing out lands in the catch below, which returns FALLBACK_RESULT so the
+// UI shows the "Couldn't verify" screen instead of freezing.
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  timeout: 60_000,
+  maxRetries: 1,
+})
 
 // The model may wrap its JSON in markdown code fences or add stray prose.
 // Strip fences and isolate the outermost JSON object before parsing.

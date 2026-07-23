@@ -7,25 +7,52 @@ export async function GET() {
   const userId = await getSessionUser()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
+  // Card images are stored as base64 data URLs, so pulling every card's
+  // imageUrl here made this response megabytes large. Fetch card metadata
+  // without images, then resolve just one cover image per collection.
   const collections = await prisma.collection.findMany({
     where: { userId },
     include: {
       _count: { select: { cards: true } },
       cards: {
-        select: { id: true, imageUrl: true, estimatedValue: true, analysisJson: true, isOriginal: true },
+        select: { id: true, estimatedValue: true, analysisJson: true, isOriginal: true },
         orderBy: { scannedAt: "asc" },
       },
     },
     orderBy: { createdAt: "asc" },
   })
 
+  const collectionIds = collections.map((c) => c.id)
+  const thumbnailIds = collections
+    .map((c) => c.thumbnailCardId)
+    .filter((id): id is string => Boolean(id))
+
+  const [chosenCards, firstImageCards] = await Promise.all([
+    thumbnailIds.length
+      ? prisma.card.findMany({
+          where: { id: { in: thumbnailIds } },
+          select: { id: true, collectionId: true, imageUrl: true },
+        })
+      : Promise.resolve([]),
+    collectionIds.length
+      ? prisma.$queryRaw<{ collectionId: string; imageUrl: string }[]>`
+          SELECT DISTINCT ON ("collectionId") "collectionId", "imageUrl"
+          FROM "Card"
+          WHERE "collectionId" = ANY(${collectionIds}::text[]) AND "imageUrl" IS NOT NULL
+          ORDER BY "collectionId", "scannedAt" ASC`
+      : Promise.resolve([]),
+  ])
+
+  const chosenById = new Map(chosenCards.map((card) => [card.id, card]))
+  const firstImageByCollection = new Map(firstImageCards.map((row) => [row.collectionId, row.imageUrl]))
+
   return NextResponse.json(
     collections.map((c) => {
       const total = c.cards.reduce((sum, card) => sum + cardNumericValue(card.estimatedValue, card.analysisJson), 0)
       const originalCount = c.cards.filter((card) => card.isOriginal).length
-      const chosen = c.thumbnailCardId ? c.cards.find((card) => card.id === c.thumbnailCardId) : null
+      const chosen = c.thumbnailCardId ? chosenById.get(c.thumbnailCardId) : null
       const coverImageUrl =
-        chosen?.imageUrl ?? c.cards.find((card) => card.imageUrl)?.imageUrl ?? null
+        (chosen?.collectionId === c.id ? chosen.imageUrl : null) ?? firstImageByCollection.get(c.id) ?? null
       return {
         id: c.id,
         name: c.name,

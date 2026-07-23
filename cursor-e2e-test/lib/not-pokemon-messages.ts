@@ -13,8 +13,8 @@ const MESSAGES: Record<NotPokemonImageCategory, NotPokemonMessage[]> = {
   ],
   person: [
     { header: "You do look like a Pokémon.", subtext: "Unfortunately, you are still not a Pokémon card." },
-    { header: "Bold submission.", subtext: "Now show me a real Pokémon card." },
-    { header: "I see a human. I need a card.", subtext: "Point the camera at a Pokémon TCG card." },
+    // { header: "Bold submission.", subtext: "Now show me a real Pokémon card." },
+    // { header: "I see a human. I need a card.", subtext: "Point the camera at a Pokémon TCG card." },
   ],
   food: [
     { header: "Great snack. Wrong app.", subtext: "Eat it, then scan a real Pokémon card." },
